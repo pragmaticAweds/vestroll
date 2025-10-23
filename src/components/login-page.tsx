@@ -192,7 +192,7 @@ export default function LoginPage({
                   <button
                     type="button"
                     onClick={onForgotPassword}
-                    className="text-[16px] text-[#5E2A8C] font-semibold hover:text-purple-800 mt-6 mb-8"
+                    className="text-[16px] text-[#5E2A8C] font-semibold hover:text-purple-800 mt-6 mb-8 cursor-pointer"
                   >
                     Forgot password?
                   </button>
@@ -202,7 +202,7 @@ export default function LoginPage({
                   type="button"
                   disabled={isLoading}
                   onClick={handleSubmit}
-                  className={`w-full py-3.5 sm:py-4 text-[16px] px-4 rounded-[12px] font-semibold text-white text-sm sm:text-base transition-all duration-200 ${
+                  className={`w-full py-3.5 sm:py-4 text-[16px] px-4 rounded-[12px] font-semibold text-white text-sm sm:text-base transition-all duration-200 cursor-pointer ${
                     !isLoading
                       ? "bg-[#5E2A8C] hover:bg-purple-800 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transform hover:scale-[1.02] active:scale-[0.98]"
                       : "bg-gray-300 cursor-not-allowed"
@@ -235,7 +235,7 @@ export default function LoginPage({
               <div className="mt-6 grid grid-cols-2 gap-3">
                 <button
                   type="button"
-                  className="w-full flex flex-row gap-2 items-center justify-center  items-center py-2.5 sm:py-3 px-2 sm:px-4 border border-gray-300 rounded-lg shadow-sm bg-white text-xs sm:text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-colors"
+                  className="w-full flex flex-row gap-2 justify-center  items-center py-2.5 sm:py-3 px-2 sm:px-4 border border-gray-300 rounded-lg shadow-sm bg-white text-xs sm:text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-colors"
                 >
                   <span className="text-[#17171C] text-[16px] font-medium">
                     Login with
@@ -294,7 +294,7 @@ export default function LoginPage({
             </div>
           </div>
 
-          <div className="w-full px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+          <div className="hidden md:w-full px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
             <div className="max-w-md mx-auto lg:max-w-none">
               <div className="flex lg:flex flex-col sm:flex-row justify-between items-center space-y-2 sm:space-y-0 text-xs sm:text-sm">
                 <span className="text-[#414F62] text-[12px] font-medium">

@@ -1,6 +1,6 @@
-'use client';
-import Image from 'next/image';
-import React, { useState, useRef, useEffect } from 'react';
+"use client";
+import Image from "next/image";
+import React, { useState, useRef, useEffect } from "react";
 
 interface EmailVerificationProps {
   email: string;
@@ -13,10 +13,10 @@ interface EmailVerificationProps {
 }
 
 const maskEmail = (email: string) =>
-  email.replace(/(.{2})(.*)(@.*)/, '$1***$3');
+  email.replace(/(.{2})(.*)(@.*)/, "$1***$3");
 
 const formatTime = (s: number) =>
-  `${Math.floor(s / 60)}:${(s % 60).toString().padStart(2, '0')}`;
+  `${Math.floor(s / 60)}:${(s % 60).toString().padStart(2, "0")}`;
 
 const EmailVerification: React.FC<EmailVerificationProps> = ({
   email,
@@ -24,11 +24,11 @@ const EmailVerification: React.FC<EmailVerificationProps> = ({
   onResend,
   resendCooldown = 60,
   otpLength = 6,
-  className = '',
+  className = "",
   onGoBack,
 }) => {
-  const [otp, setOtp] = useState<string[]>(Array(otpLength).fill(''));
-  const [error, setError] = useState('');
+  const [otp, setOtp] = useState<string[]>(Array(otpLength).fill(""));
+  const [error, setError] = useState("");
   const [verifying, setVerifying] = useState(false);
   const [resending, setResending] = useState(false);
   const [countdown, setCountdown] = useState(resendCooldown);
@@ -46,36 +46,36 @@ const EmailVerification: React.FC<EmailVerificationProps> = ({
     const next = [...otp];
     next[i] = v;
     setOtp(next);
-    setError('');
+    setError("");
     if (v && i < otpLength - 1) inputRefs.current[i + 1]?.focus();
   };
 
   const handleKey = (i: number, e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Backspace') {
+    if (e.key === "Backspace") {
       if (!otp[i] && i > 0) {
         const next = [...otp];
-        next[i - 1] = '';
+        next[i - 1] = "";
         setOtp(next);
         inputRefs.current[i - 1]?.focus();
       } else if (otp[i]) {
         const next = [...otp];
-        next[i] = '';
+        next[i] = "";
         setOtp(next);
       }
     }
-    if (e.key === 'ArrowLeft' && i > 0) inputRefs.current[i - 1]?.focus();
-    if (e.key === 'ArrowRight' && i < otpLength - 1)
+    if (e.key === "ArrowLeft" && i > 0) inputRefs.current[i - 1]?.focus();
+    if (e.key === "ArrowRight" && i < otpLength - 1)
       inputRefs.current[i + 1]?.focus();
   };
 
   const handlePaste = (e: React.ClipboardEvent) => {
     e.preventDefault();
     const data = e.clipboardData
-      .getData('text')
-      .replace(/\D/g, '')
+      .getData("text")
+      .replace(/\D/g, "")
       .slice(0, otpLength);
     if (!data) return;
-    setOtp(Array.from({ length: otpLength }, (_, i) => data[i] || ''));
+    setOtp(Array.from({ length: otpLength }, (_, i) => data[i] || ""));
     const next = data.length < otpLength ? data.length : otpLength - 1;
     inputRefs.current[next]?.focus();
   };
@@ -86,16 +86,16 @@ const EmailVerification: React.FC<EmailVerificationProps> = ({
       return;
     }
     setVerifying(true);
-    setError('');
+    setError("");
     try {
-      const valid = await onVerify(otp.join(''));
+      const valid = await onVerify(otp.join(""));
       if (!valid) {
-        setError('Invalid code. Try again.');
-        setOtp(Array(otpLength).fill(''));
+        setError("Invalid code. Try again.");
+        setOtp(Array(otpLength).fill(""));
         inputRefs.current[0]?.focus();
       }
     } catch {
-      setError('Verification failed. Try again.');
+      setError("Verification failed. Try again.");
     } finally {
       setVerifying(false);
     }
@@ -104,14 +104,14 @@ const EmailVerification: React.FC<EmailVerificationProps> = ({
   const resend = async () => {
     if (countdown > 0 || resending) return;
     setResending(true);
-    setError('');
+    setError("");
     try {
       await onResend();
       setCountdown(resendCooldown);
-      setOtp(Array(otpLength).fill(''));
+      setOtp(Array(otpLength).fill(""));
       inputRefs.current[0]?.focus();
     } catch {
-      setError('Failed to resend code.');
+      setError("Failed to resend code.");
     } finally {
       setResending(false);
     }
@@ -127,7 +127,7 @@ const EmailVerification: React.FC<EmailVerificationProps> = ({
           Verify your email address
         </h1>
         <p className="text-[#414F62] text-sm font-medium">
-          Please enter the verification code sent to <br /> your email address{' '}
+          Please enter the verification code sent to <br /> your email address{" "}
           <span className="font-medium">{maskEmail(email)}</span>
         </p>
       </div>
@@ -149,10 +149,10 @@ const EmailVerification: React.FC<EmailVerificationProps> = ({
                 onChange={(e) => handleInput(i, e.target.value)}
                 onKeyDown={(e) => handleKey(i, e)}
                 onPaste={handlePaste}
-                className={`w-[66px] h-[72px] text-center text-[#17171C] ${digit ? 'text-[1px]' : 'text-2xl'} font-medium border rounded-lg focus:ring-2 focus:ring-[#5E2A8C] transition-colors flex items-center ${
+                className={`w-[66px] h-[72px] text-center text-[#17171C] ${digit ? "text-[1px]" : "text-2xl"} font-medium border rounded-lg focus:ring-2 focus:ring-[#5E2A8C] transition-colors flex items-center ${
                   error
-                    ? 'border-red-300 bg-red-50'
-                    : 'border-gray-300 bg-gray-50 hover:bg-white focus:bg-white'
+                    ? "border-red-300 bg-red-50"
+                    : "border-gray-300 bg-gray-50 hover:bg-white focus:bg-white"
                 }`}
                 maxLength={1}
                 autoComplete="off"
@@ -180,7 +180,7 @@ const EmailVerification: React.FC<EmailVerificationProps> = ({
       <div className="text-center mb-6">
         {countdown > 0 ? (
           <span className="text-[#BDC5D1]">
-            Resend code{' '}
+            Resend code{" "}
             <span className="text-[#5E2A8C]">{formatTime(countdown)}</span>
           </span>
         ) : (
@@ -189,7 +189,7 @@ const EmailVerification: React.FC<EmailVerificationProps> = ({
             disabled={!canResend}
             className="text-sm text-[#5E2A8C] hover:text-[#5E2A8C]/70 font-medium disabled:opacity-50"
           >
-            {resending ? 'Sending...' : 'Resend code'}
+            {resending ? "Sending..." : "Resend code"}
           </button>
         )}
       </div>
@@ -199,11 +199,11 @@ const EmailVerification: React.FC<EmailVerificationProps> = ({
         disabled={!canVerify}
         className={`w-full py-3 px-4 rounded-lg font-medium text-white transition-all ${
           canVerify
-            ? 'bg-[#5E2A8C] hover:bg-[#5E2A8C] shadow-sm hover:shadow-md'
-            : 'bg-gray-400 cursor-not-allowed'
+            ? "bg-[#5E2A8C] hover:bg-[#5E2A8C] shadow-sm hover:shadow-md"
+            : "bg-gray-400 cursor-not-allowed"
         }`}
       >
-        {verifying ? 'Verifying...' : 'Verify'}
+        {verifying ? "Verifying..." : "Verify"}
       </button>
 
       <div className="text-center mt-6">
@@ -212,7 +212,7 @@ const EmailVerification: React.FC<EmailVerificationProps> = ({
           disabled={!canResend}
           className="text-sm text-[#5E2A8C] hover:text-[#5E2A8C]/70 font-medium disabled:text-gray-400 disabled:cursor-not-allowed"
         >
-          Didn't get the code?
+          Didn&apos;t get the code?
         </button>
       </div>
 
