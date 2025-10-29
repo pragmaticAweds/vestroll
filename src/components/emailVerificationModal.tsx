@@ -124,7 +124,7 @@ const EmailVerification: React.FC<EmailVerificationProps> = ({
     <div className={`max-w-md  p-2  ${className}`}>
       <div className="mb-12">
         <h1 className="md:text-[40px] text-3xl font-bold text-[#17171C] mb-3">
-          Provide 6-digit code
+          Verify your email address
         </h1>
         <p className="text-[#414F62] text-[16px] font-medium">
           Please enter the verification code sent to <br /> your email address{" "}
