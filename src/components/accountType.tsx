@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import BusinessIllustration from "./ui/business_illustration";
-import FreelancerIllustration from "./ui/freelancer_illustration";
 import ContractorIllustration from "./ui/contractor_illustration";
 import Image from "next/image";
 import mobileLogo from "../../public/logo/mologo.png";
@@ -24,8 +23,8 @@ const accountTypes = [
       <Image
         src={freelanceIllustration}
         alt="Freelancer Illustration"
-        width={150} // Adjust size as needed
-        height={150} // Adjust size as needed
+        width={150}
+        height={150}
         className="object-contain"
       />
     ),

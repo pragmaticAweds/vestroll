@@ -314,7 +314,7 @@ export default function LoginPage({
                 <p className="text-[16px] font-medium flex flex-row gap-2 justify-center items-center sm:text-sm text-gray-600">
                   New to VestRoll?
                   <a
-                    href="#"
+                    href="/register"
                     className="font-semibold text-[16px] text-purple-700 hover:text-purple-800"
                   >
                     Create Account
