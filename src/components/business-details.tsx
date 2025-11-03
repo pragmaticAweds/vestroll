@@ -4,6 +4,7 @@ import { ChevronDown } from "lucide-react";
 import Image from "next/image";
 import mobileLogo from "../../public/logo/mologo.png";
 import leftImg from "../../public/images/Left.png";
+import ModalWelcomeOnboard from "./modal-welcome-onboard";
 
 // Type definitions
 interface FormData {
@@ -99,6 +100,7 @@ const BusinessRegistrationForm: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [progress, setProgress] = useState(1);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [showWelcomeModal, setShowWelcomeModal] = useState(false);
 
   const companySizes = [
     "1-10 employees",
@@ -193,7 +195,7 @@ const BusinessRegistrationForm: React.FC = () => {
     // Simulate API call
     setTimeout(() => {
       console.log("Form submitted:", formData);
-      alert("Business details submitted successfully!");
+      setShowWelcomeModal(true);
       setIsSubmitting(false);
     }, 2000);
   };
@@ -383,6 +385,7 @@ const BusinessRegistrationForm: React.FC = () => {
                 {/* Continue Button */}
                 <button
                   type="submit"
+                  onClick={handleSubmit}
                   disabled={!isFormValid || isSubmitting}
                   className={`w-full py-4 px-6 rounded-lg font-semibold text-white transition-all duration-200 ${
                     isFormValid && !isSubmitting
@@ -401,6 +404,9 @@ const BusinessRegistrationForm: React.FC = () => {
                 </button>
               </div>
             </div>
+            {showWelcomeModal && (
+              <ModalWelcomeOnboard open={showWelcomeModal} />
+            )}
           </div>
           {/* Footer */}
           <div className="w-full pt-6 text-center mb-8 text-sm hidden md:block">
