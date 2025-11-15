@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from 'react';
-import { Pencil, Mail, X } from 'lucide-react';
+import React, { useState } from "react";
+import { Pencil, Mail, X } from "lucide-react";
 
 interface BillingEmailSectionProps {
   billingEmail: string;
@@ -10,11 +10,11 @@ interface BillingEmailSectionProps {
 
 export default function BillingEmailSection({
   billingEmail,
-  onEmailUpdate
+  onEmailUpdate,
 }: BillingEmailSectionProps) {
   const [showModal, setShowModal] = useState(false);
-  const [tempEmail, setTempEmail] = useState('');
-  const [error, setError] = useState('');
+  const [tempEmail, setTempEmail] = useState("");
+  const [error, setError] = useState("");
 
   const isValidEmail = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -23,33 +23,33 @@ export default function BillingEmailSection({
 
   const handleUpdate = (): void => {
     const trimmedEmail = tempEmail.trim();
-    
+
     if (!trimmedEmail) {
-      setError('Email address is required');
+      setError("Email address is required");
       return;
     }
-    
+
     if (!isValidEmail(trimmedEmail)) {
-      setError('Please enter a valid email address');
+      setError("Please enter a valid email address");
       return;
     }
-    
+
     onEmailUpdate(trimmedEmail);
     setShowModal(false);
-    setTempEmail('');
-    setError('');
+    setTempEmail("");
+    setError("");
   };
 
   const openModal = (): void => {
     setTempEmail(billingEmail);
-    setError('');
+    setError("");
     setShowModal(true);
   };
 
   const closeModal = (): void => {
     setShowModal(false);
-    setTempEmail('');
-    setError('');
+    setTempEmail("");
+    setError("");
   };
 
   return (
@@ -61,41 +61,47 @@ export default function BillingEmailSection({
           </h2>
           <button
             onClick={openModal}
-            className="flex items-center gap-2 px-3 sm:px-4 py-2 text-xs sm:text-sm text-purple-600 border border-purple-600 rounded-lg hover:bg-purple-50 transition-colors"
+            className="flex items-center gap-2 px-3 sm:px-4 py-2 text-xs sm:text-sm text-[#5E2A8C] border border-[#5E2A8C] rounded-3xl hover:bg-purple-50 transition-colors"
           >
             <Pencil className="w-3 h-3 sm:w-4 sm:h-4" />
             Edit
           </button>
         </div>
-        
+
         {billingEmail ? (
           <div className="flex items-center gap-3 p-3 sm:p-4 bg-gray-50 rounded-lg">
             <div className="w-8 h-8 sm:w-10 sm:h-10 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
-              <Mail className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600" />
+              <Mail className="w-4 h-4 sm:w-5 sm:h-5 text-[#5E2A8C]" />
             </div>
             <div className="min-w-0 flex-1">
               <p className="text-xs text-gray-500 mb-1">Email address</p>
-              <p className="text-sm font-medium text-gray-900 truncate">{billingEmail}</p>
+              <p className="text-sm font-medium text-gray-900 truncate">
+                {billingEmail}
+              </p>
             </div>
           </div>
         ) : (
           <div className="text-center py-6 px-4 text-xs sm:text-sm text-gray-500 bg-gray-50 rounded-lg">
-            You don&apos;t have any billing email addresses set up currently, therefore, invoices will be sent to company administrators by default.
+            You don&apos;t have any billing email addresses set up currently,
+            therefore, invoices will be sent to company administrators by
+            default.
           </div>
         )}
       </div>
 
       {showModal && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-in fade-in duration-200"
           onClick={closeModal}
         >
-          <div 
+          <div
             className="bg-white rounded-lg max-w-md w-full p-6 shadow-xl animate-in zoom-in-95 duration-200"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-semibold text-gray-900">Billing email address</h3>
+              <h3 className="text-lg font-semibold text-gray-900">
+                Billing email address
+              </h3>
               <button
                 onClick={closeModal}
                 className="text-gray-400 hover:text-gray-600 transition-colors"
@@ -103,7 +109,7 @@ export default function BillingEmailSection({
                 <X className="w-5 h-5" />
               </button>
             </div>
-            
+
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Email address
@@ -113,13 +119,13 @@ export default function BillingEmailSection({
                 value={tempEmail}
                 onChange={(e) => {
                   setTempEmail(e.target.value);
-                  if (error) setError('');
+                  if (error) setError("");
                 }}
                 onKeyDown={(e) => {
-                  if (e.key === 'Enter') handleUpdate();
+                  if (e.key === "Enter") handleUpdate();
                 }}
-                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-colors ${
-                  error ? 'border-red-500' : 'border-gray-300'
+                className={`w-full px-4 py-2 border rounded-lg text-black focus:ring-2 focus:ring-purple-900 focus:border-transparent outline-none transition-colors ${
+                  error ? "border-red-500" : "border-gray-300"
                 }`}
                 placeholder="Enter billing email"
                 autoFocus
@@ -129,7 +135,7 @@ export default function BillingEmailSection({
 
             <button
               onClick={handleUpdate}
-              className="w-full py-3 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 transition-colors"
+              className="w-full py-3 bg-[#5E2A8C] text-white rounded-lg font-medium hover:bg-purple-700 transition-colors"
             >
               Update
             </button>
@@ -138,5 +144,4 @@ export default function BillingEmailSection({
       )}
     </>
   );
-};
-
+}

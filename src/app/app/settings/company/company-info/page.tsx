@@ -24,7 +24,7 @@ interface FormData {
   companyWebsite: string;
 }
 
-export default function OTPVerification() {
+export default function CompanyInfoPage() {
   const logoInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 

@@ -1,9 +1,9 @@
 "use client";
 
-import React from 'react';
-import { Pencil, Trash2 } from 'lucide-react';
-import { User } from '@/types/permissions-tab.types';
-import { de } from 'zod/v4/locales';
+import React from "react";
+import { Pencil, Trash2 } from "lucide-react";
+import { User } from "@/types/permissions-tab.types";
+import { de } from "zod/v4/locales";
 
 interface UserCardProps {
   user: User;
@@ -17,30 +17,51 @@ export default function UserCard({ user, onEdit, onDelete }: UserCardProps) {
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-3 flex-1 min-w-0">
           <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center text-sm font-medium text-gray-600 flex-shrink-0">
-            {user.name.split(' ').map(n => n[0]).join('')}
+            {user.name
+              .split(" ")
+              .map((n) => n[0])
+              .join("")}
           </div>
           <div className="min-w-0 flex-1">
             <p className="text-sm font-medium text-gray-900 truncate flex items-center gap-2">
               {user.name}
-              {user.status === 'invited' && (
-                <span className="text-xs text-yellow-600 bg-yellow-50 px-2 py-0.5 rounded flex-shrink-0">Invited</span>
+              {user.status === "invited" && (
+                <span className="text-xs text-yellow-600 bg-yellow-50 px-2 py-0.5 rounded flex-shrink-0">
+                  Invited
+                </span>
               )}
             </p>
             <p className="text-xs text-gray-500 truncate">{user.email}</p>
           </div>
         </div>
         <div className="flex items-center gap-1 flex-shrink-0 ml-2">
-          {user.status === 'invited' && (
+          {user.status === "invited" && (
             <button className="p-2 text-gray-400 hover:text-gray-600">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                />
               </svg>
             </button>
           )}
-          <button onClick={onEdit} className="p-2 text-gray-400 hover:text-purple-600">
+          <button
+            onClick={onEdit}
+            className="p-2 text-gray-400 hover:text-purple-600"
+          >
             <Pencil className="w-4 h-4" />
           </button>
-          <button onClick={onDelete} className="p-2 text-gray-400 hover:text-red-600">
+          <button
+            onClick={onDelete}
+            className="p-2 text-gray-400 hover:text-red-600"
+          >
             <Trash2 className="w-4 h-4" />
           </button>
         </div>
@@ -57,5 +78,4 @@ export default function UserCard({ user, onEdit, onDelete }: UserCardProps) {
       </div>
     </div>
   );
-};
-
+}
