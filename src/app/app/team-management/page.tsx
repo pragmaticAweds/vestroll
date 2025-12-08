@@ -153,7 +153,7 @@ const TeamManagementDashboard = () => {
         return (
           <div className="bg-white rounded-lg border border-gray-200 min-h-96">
             <EmptyState
-              title={`No ${activeTab.toLowerCase()} records`}
+              title={`No ${activeTab.toLowerCase()} records yet`}
               message={`${activeTab} records will be displayed here once added.`}
             />
           </div>
