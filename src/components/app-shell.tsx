@@ -1,14 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import avatar from "../../public/avatar/avatar.png";
 import Image, { StaticImageData } from "next/image";
 import MobileHeader from "./mobile-header";
 import DesktopHeader from "./desktop-header";
 import Sidebar from "./sidebar";
 import Link from "next/link";
-import { Bell, Menu, MenuIcon, Search } from "lucide-react";
-import NotificationsModal from "./dashboard/NotificationsModal";
+import { Bell, Menu, MenuSquare, Search } from "lucide-react";
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -30,36 +29,9 @@ export default function AppShell({
   },
 }: AppShellProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [isNotificationOpen, setIsNotificationOpen] = useState(false)
-  const notificationRef = useRef<HTMLDivElement>(null)
-
-  // Close modal when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        notificationRef.current &&
-        !notificationRef.current.contains(event.target as Node)
-      ) {
-        setIsNotificationOpen(false)
-      }
-    }
-
-    if (isNotificationOpen) {
-      document.addEventListener('mousedown', handleClickOutside)
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [isNotificationOpen])
-
-  const toggleNotification = () => {
-    setIsNotificationOpen(!isNotificationOpen)
-  }
 
   return (
     <div className="min-h-screen bg-[#f3f4f6]">
-
       {/* Main Layout */}
       <div className="flex">
         {/* Sidebar */}
@@ -70,10 +42,20 @@ export default function AppShell({
 
         <div className="flex-1">
           {/* Top Navigation Header */}
-          <header className="bg-white lg:border-b border-[#DCE0E5] px-4 sm:px-6 py-2">
+          <header className="bg-white border-b border-[#DCE0E5] px-4 sm:px-6 py-2">
             <div className="flex items-center justify-between">
               {/* Center - Search bar */}
-              <div className="hidden lg:block flex-1 max-w-md">
+              <div className="flex-1 md:hidden">
+                <button
+                  onClick={() => setMobileOpen(true)}
+                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                  aria-label="Open menu"
+                >
+                  <Menu className="w-8 h-8 text-[#7F8C9F]" />
+                </button>
+              </div>
+
+              <div className="hidden md:flex  max-w-md flex-1">
                 <div className="flex items-center justify-between bg-[#F5F6F7] border border-[#DCE0E5] rounded-lg px-3 py-2 focus-within:ring-2 focus-within:ring-purple-500 focus-within:border-transparent transition-all">
                   <input
                     type="text"
@@ -84,38 +66,21 @@ export default function AppShell({
                 </div>
               </div>
 
-              <div>
-                <MenuIcon className="w-6 h-6 lg:hidden cursor-pointer" onClick={() => setMobileOpen(true)} />
-              </div>
-
               {/* Right side - User profile */}
               <div className="flex items-center gap-4 ml-4">
-                {/* Search icon for mobile view */}
-                <div className="lg:hidden hover:bg-gray-100 bg-white border border-[#DCE0E5] rounded-full p-2.5">
-                  <Search className="w-5 h-5" />
-                </div>
-
-                <div className="relative" ref={notificationRef}>
-                    <button className="relative p-2 hover:bg-gray-100 bg-white border border-[#DCE0E5] rounded-full transition-colors cursor-pointer"
-                    onClick={toggleNotification}
-                  >
-                    <Bell className="w-6 h-6 text-gray-600" />
-                    <span className="absolute top-1 right-3 w-2 h-2 bg-[#5E2A8C] rounded-full"></span>
-                  </button>
-
-                  {/* Notification Modal Dropdown */}
-                  {isNotificationOpen && (
-                    <div className="absolute -right-10 md:right-10 top-full mt-2 z-50 w-80 lg:w-[450px]">
-                      <NotificationsModal onClose={() => setIsNotificationOpen(false)} />
-                    </div>
-                  )}
-                </div>
+                <Search className="w-5 h-5 md:hidden text-[#7F8C9F] ml-2" />
+                <button className="relative p-2 hover:bg-gray-100 bg-white border border-[#DCE0E5] rounded-full transition-colors">
+                  <Bell className="w-6 h-6 text-gray-600" />
+                  <span className="absolute top-1 right-3 w-2 h-2 bg-[#5E2A8C] rounded-full"></span>
+                </button>
 
                 <div className="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors">
                   <div className="relative">
-                    <img
+                    <Image
                       src="/user-avatar.svg"
                       alt="Peter"
+                      width={40}
+                      height={40}
                       className="w-10 h-10 object-contain"
                     />
                   </div>
@@ -125,14 +90,19 @@ export default function AppShell({
                     </p>
                     <p className="text-[#7F8C9F] text-[10px]">Administrator</p>
                   </div>
-                  <img
+                  <Image
                     src="/arrow-down.png"
+                    alt="Dropdown arrow"
+                    width={16}
+                    height={16}
                     className="w-4 h-4 text-gray-400 hidden sm:block"
                   />
                 </div>
               </div>
             </div>
           </header>
+
+          {/* second navigation bar */}
 
           {/* Main Content Area */}
           <main className="min-h-screen bg-[#f3f4f6]">{children}</main>

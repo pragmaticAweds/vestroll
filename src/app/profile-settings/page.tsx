@@ -12,7 +12,6 @@ import {
 import NotificationSection from "@/components/profile-settings/NotificationSection";
 import ProfileForm from "@/components/profile-settings/ProfileForm";
 
-
 const defaultNotifications: NotificationSettings = {
   contractRequests: true,
   contractsUpdates: true,
@@ -231,7 +230,6 @@ const ProfileSettingsPage: React.FC = () => {
         );
 
       case "Preferences":
-       
 
       default:
         return null;

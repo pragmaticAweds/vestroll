@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { Settings, LogOut, X } from "lucide-react";
+import logoSet from "../../public/LogoSet.png";
 
 type NavItem = {
   name: string;
@@ -57,14 +58,13 @@ export default function Sidebar({
 
   const content = (
     <div className="flex h-full flex-col px-4 py-6">
-      <div className="flex items-center justify-between px-2">
+      <div className="flex items-center justify-between px-2 mb-10">
         <Link
           href="/"
           className="flex items-center gap-3"
           aria-label="VestRoll home"
         >
-          <Image src="/vestroll-logo.svg" alt="VestRoll" width={50} height={50} />
-          <span className="text-xl font-bold text-background">VestRoll</span>
+          <Image src={logoSet} alt="VestRoll" />
         </Link>
         <button
           type="button"
@@ -72,11 +72,11 @@ export default function Sidebar({
           onClick={onCloseMobile}
           className="lg:hidden rounded-lg p-2 hover:bg-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6d28d9]"
         >
-          <X className="h-5 w-5" />
+          <X className="h-5 w-5 text-black" />
         </button>
       </div>
 
-      <div className="mt-8 px-2 text-xs font-semibold tracking-wider text-[#6b7280]">
+      <div className="mt-10 px-2 text-xs font-semibold tracking-wider text-[#6b7280]">
         MENU
       </div>
 
@@ -128,18 +128,20 @@ export default function Sidebar({
             );
           })}
         </ul>
-      </nav>
 
-      <div className="mt-auto px-2">
-        <Link
-          href="#"
-          className="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm text-[#b91c1c] hover:bg-red-50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
-          aria-label="Sign out"
-        >
-          <LogOut className="h-5 w-5" aria-hidden="true" />
-          <span>Sign out</span>
-        </Link>
-      </div>
+        <div className="mt-50 -mx-4 border-t border-gray-300">
+          <div className="px-4 pt-3">
+            <Link
+              href="#"
+              className="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm   text-[#b91c1c] hover:bg-red-50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
+              aria-label="Sign out"
+            >
+              <LogOut className="h-5 w-5" aria-hidden="true" />
+              <span>Sign out</span>
+            </Link>
+          </div>
+        </div>
+      </nav>
     </div>
   );
 

@@ -51,9 +51,13 @@ export default function PermissionsInfoModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 ">
+    <div className="fixed inset-0 z-50 flex items-center justify-center  ">
+      <div
+        className="absolute inset-0 bg-black/40 backdro-slur-sm"
+        onClick={onClose}
+      />
       {/* Modal panel */}
-      <div className="flex h-full w-full flex-col rounded-none bg-white shadow-lg md:h-auto md:w-[480px] md:max-w-lg md:rounded-2xl">
+      <div className="relative flex h-full w-full flex-col rounded-none bg-white shadow-lg md:h-auto md:w-[480px] md:max-w-lg md:rounded-2xl">
         {/* Header */}
         <div className="relative flex items-center border-b px-6 py-4">
           {/* X always on the left */}

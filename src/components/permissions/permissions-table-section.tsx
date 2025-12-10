@@ -1,11 +1,10 @@
 "use client";
 
-import React from 'react';
-import { Pencil } from 'lucide-react';
-import { User } from '@/types/permissions-tab.types';
-import UserTableRow from './user-table-row';
-import UserCard from './user-card';
-
+import React from "react";
+import { Pencil } from "lucide-react";
+import { User } from "@/types/permissions-tab.types";
+import UserTableRow from "./user-table-row";
+import UserCard from "./user-card";
 
 interface PermissionsTableSectionProps {
   users: User[];
@@ -18,15 +17,17 @@ export default function PermissionsTableSection({
   users,
   onEditUser,
   onDeleteUser,
-  onSetPermission
+  onSetPermission,
 }: PermissionsTableSectionProps) {
   return (
     <div className="bg-white rounded-lg border border-gray-200 p-4 sm:p-6">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-base sm:text-lg font-semibold text-gray-900">Permissions</h2>
+        <h2 className="text-base sm:text-lg font-semibold text-gray-900">
+          Permissions
+        </h2>
         <button
           onClick={onSetPermission}
-          className="flex items-center gap-2 px-3 sm:px-4 py-2 text-xs sm:text-sm text-purple-600 border border-purple-600 rounded-lg hover:bg-purple-50 transition-colors"
+          className="flex items-center gap-2 px-3 sm:px-4 py-2 text-xs sm:text-sm text-[#5E2A8C] border border-[#5E2A8C] rounded-3xl hover:bg-purple-50 transition-colors"
         >
           <Pencil className="w-3 h-3 sm:w-4 sm:h-4" />
           Set permission
@@ -38,8 +39,12 @@ export default function PermissionsTableSection({
         <table className="w-full">
           <thead>
             <tr className="border-b border-gray-200">
-              <th className="text-left py-3 px-4 text-xs font-medium text-gray-500 uppercase">Name</th>
-              <th className="text-left py-3 px-4 text-xs font-medium text-gray-500 uppercase">Permissions</th>
+              <th className="text-left py-3 px-4 text-xs font-medium text-gray-500 uppercase">
+                Name
+              </th>
+              <th className="text-left py-3 px-4 text-xs font-medium text-gray-500 uppercase">
+                Permissions
+              </th>
               <th className="w-20"></th>
             </tr>
           </thead>
@@ -69,5 +74,4 @@ export default function PermissionsTableSection({
       </div>
     </div>
   );
-};
-
+}
