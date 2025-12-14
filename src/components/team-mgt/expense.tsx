@@ -1,0 +1,185 @@
+'use client';
+
+import EmptyState from "@/components/ui/EmptyState";
+import { cn } from "@/utils/classNames";
+import { Expense, expenses } from "@/data/team-mgt";
+import { currencies } from "@/util/constant";
+import { useState } from "react";
+import { getStatusIcon, getStatusClass, getStatusText } from "./status-lib";
+import { createPortal } from "react-dom";
+import { StatusModal } from "./status-modal";
+import { BookmarkMinusIcon } from "lucide-react";
+import { DetailsConfig } from "./details.types";
+import { DetailsView } from "./details-view";
+
+function TeamMgtExpense() {
+    const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
+    const [showStatusModal, setShowStatusModal] = useState(false);
+    const handleStatusModal = (show: boolean) => setShowStatusModal(show);
+
+  const ExpenseList = () => {
+    return (
+        <section>
+      <div className="bg-white sm:bg-white p-4 rounded-lg">
+        <div className="space-y-4 mb-6">
+            <h2 className="text-base font-semibold text-gray-900">
+                Expense requests
+            </h2>
+        </div>
+
+        {expenses.length > 0 ? (
+          <div className="overflow-x-auto">
+            <table className="min-w-full">
+              <thead className="hidden md:table-header-group ltr:text-left rtl:text-right bg-gray-50 rounded-t-lg text-xs font-medium">
+                <tr className="*:font-medium *:text-gray-500">
+                  <th className="px-3 py-4 whitespace-nowrap">#</th>
+                  <th className="px-3 py-4 whitespace-nowrap">
+                    Employee
+                  </th>
+                  <th className="px-3 py-4 whitespace-nowrap">
+                    Expense name
+                  </th>
+                  <th className="px-3 py-4 whitespace-nowrap">
+                    Expense date
+                  </th>
+                  <th className="px-3 py-4 whitespace-nowrap">
+                    Amount
+                  </th>
+                  <th className="px-3 py-4 whitespace-nowrap">
+                    Paid in
+                  </th>
+                  <th className="px-3 py-4 whitespace-nowrap">Status</th>
+                  <th className="px-3 py-4 whitespace-nowrap">Submitted</th>
+                </tr>
+              </thead>
+
+              <tbody className="divide-y divide-gray-200">
+                {expenses.map((expense, index) => (
+                <tr className="*:text-[#17171C] *:first:font-medium cursor-pointer" key={index} onClick={() => setSelectedExpense(expense)}>
+                  <td className="hidden md:table-cell px-3 py-4 whitespace-nowrap">{index + 1}</td>
+                  {/* includes employee name, role, picture */}
+                  <td className="hidden md:table-cell px-3 py-4 w-52 md:w-auto">
+                    <div className="flex items-center gap-2">
+                      <img src={expense.profileImage} alt="img" className="w-10 h-10 rounded-full" />
+                      <div className="flex flex-col">
+                        <span className="font-medium">{expense.employeeName}</span>
+                        <span className="text-xs text-gray-500">{expense.employeeRole}</span>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-3 py-4 w-52 md:w-auto">
+                    <div className="hidden md:table-cell line-clamp-1 md:line-clamp-none md:whitespace-nowrap">
+                      {expense.name}
+                    </div>
+                    <div className="md:hidden line-clamp-1 md:line-clamp-none md:whitespace-nowrap">
+                      {expense.name}
+                    </div>
+                    {/* mobile view */}
+                    <small className="text-xs md:hidden">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[#7F8C9F]">${expense.amount.toFixed(2)}</span>
+                        <span className="text-[#DCE0E5]">|</span>
+                        <p className="flex items-center gap-1">
+                          <img src={currencies[0].icon} alt="fiat" className="w-5 h-5" />
+                          <span className="text-[#17171C]">{currencies[0].label}</span>
+                        </p>
+                      </div>
+                    </small>
+                  </td>
+                  <td className="hidden md:table-cell px-3 py-4 whitespace-nowrap">
+                    {expense.expenseDate}
+                  </td>
+                  <td className="hidden md:table-cell px-3 py-4 whitespace-nowrap">
+                    ${expense.amount.toFixed(2)}
+                  </td>
+                  <td className="hidden md:table-cell px-3 py-4 whitespace-nowrap">
+                    <div className="w-fit flex items-center gap-1 px-2 border bg-[#F5F6F7] rounded-xl">
+                        <img src={currencies[0].icon} alt="fiat" className="w-5 h-5" />
+                        <span className="text-[#17171C]">{currencies[0].label}</span>
+                    </div>
+                  </td>
+                  <td className="px-3 py-4 whitespace-nowrap">
+                    {/* Status */}
+                    <div className={cn(
+                      "px-2 py-1 rounded-full text-xs flex items-center gap-1 border w-fit",
+                      getStatusClass(expense.status)
+                    )}>
+                      {getStatusIcon(expense.status)}
+                      <span className="text-xs">{getStatusText(expense.status)}</span>
+                    </div>
+                    {/* mobile view */}
+                    <small className="md:hidden text-xs text-[#414F62]">{expense.submittedAt}</small>
+                  </td>
+                  <td className="hidden md:table-cell px-3 py-4 whitespace-nowrap">{expense.submittedAt}</td>
+                </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <EmptyState
+            title="No expenses yet"
+            description="Keep track of your contract-related spending here."
+          />
+        )}
+      </div>
+    </section>
+    );
+  }
+
+  const expenseConfig: DetailsConfig<Expense> = {
+  title: "Expense details",
+  getStatus: (e) => e.status,
+
+  header: {
+    icon: (<BookmarkMinusIcon className="text-purple-600" size={24} />),
+    title: (e) => e.name,
+    subtitle: (e) => e.category,
+  },
+
+  summary: {
+    leftLabel: "Amount",
+    leftValue: (e) => `${e.amount} USD`,
+    rightLabel: "Expense Date",
+    rightValue: (e) => e.expenseDate,
+  },
+
+  description: "Monthly subscription for design and creative tools",
+
+  attachments: {
+    url: "https://via.placeholder.com/150",
+    submittedAt: selectedExpense?.submittedAt || "",
+  },
+
+  footerCards: {
+    employeeId: selectedExpense?.id || "",
+    contract: selectedExpense?.id || "",
+    employeeName: selectedExpense?.employeeName || "",
+    employeeRole: selectedExpense?.employeeRole || "",
+  }
+  };
+
+  return (
+    <>
+      {selectedExpense
+      ? <DetailsView
+            data={selectedExpense}
+            onBack={() => setSelectedExpense(null)}
+            onStatusChange={() => setShowStatusModal(true)}
+            config={expenseConfig}
+        />
+      : <ExpenseList />}
+
+      {/* Status modal with createPortal */}
+      {showStatusModal && createPortal(
+        <StatusModal
+            tabStatus={selectedExpense?.status || "Pending"}
+            handleStatusModal={handleStatusModal}
+        />,
+        document.body
+      )}
+    </>
+  );
+}
+
+export default TeamMgtExpense;

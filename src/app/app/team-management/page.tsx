@@ -22,6 +22,7 @@ import { Button } from "@/components/ui/button";
 import { EmployeeList } from "./components/EmployeeList";
 import TeamMgtTimeSheet from "@/components/team-mgt/time-tracking";
 import TeamMgtMilestone from "@/components/team-mgt/milestone";
+import TeamMgtExpense from "@/components/team-mgt/expense";
 
 const TeamManagementDashboard = () => {
   const [activeTab, setActiveTab] = useState("Employees");
@@ -154,14 +155,7 @@ const TeamManagementDashboard = () => {
       case "Time tracking":
         return <TeamMgtTimeSheet />
       case "Expense":
-        return (
-          <div className="bg-white rounded-lg border border-gray-200 min-h-96">
-            <EmptyState
-              title={`No ${activeTab.toLowerCase()} records yet`}
-              message={`${activeTab} records will be displayed here once added.`}
-            />
-          </div>
-        );
+        return <TeamMgtExpense />
       default:
         return null;
     }

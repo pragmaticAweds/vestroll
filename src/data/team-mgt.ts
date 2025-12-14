@@ -23,6 +23,14 @@ export type Milestone = TabProps & {
   dueDate: string;
 };
 
+export type Expense = TabProps & {
+  name: string;
+  category: string;
+  amount: number;
+  description: string;
+  expenseDate: string;
+};
+
 export const timesheets: Timesheet[] = [
   {
     id: '0x6885afa...63b3',
@@ -97,6 +105,48 @@ export const milestones: Milestone[] = [
     amount: 1200.00,
     status: 'Approved',
     dueDate: '25th Oct 2025',
+    submittedAt: '25th Oct 2025'
+  }
+];
+
+export const expenses: Expense[] = [
+  {
+    id: '0x6885afa...63b3',
+    employeeName: 'John Doe',
+    profileImage: '/profileImage.png',
+    employeeRole: 'Software Engineer',
+    name: 'Expense 1',
+    category: 'Category 1',
+    amount: 1200.00,
+    description: 'Description 1',
+    expenseDate: '25th Oct 2025',
+    status: 'Pending',
+    submittedAt: '25th Oct 2025'
+  },
+  {
+    id: '0x6885afa...63b3',
+    employeeName: 'Cody Fisher',
+    profileImage: '/profileImage.png',
+    employeeRole: 'Front-end Developer',
+    name: 'Expense 2',
+    category: 'Category 2',
+    amount: 1200.00,
+    description: 'Description 2',
+    expenseDate: '25th Oct 2025',
+    status: 'Rejected',
+    submittedAt: '25th Oct 2025'
+  },
+  {
+    id: '0x6885afa...63b3',
+    employeeName: 'Lizzie Alba',
+    profileImage: '/profileImage.png',
+    employeeRole: 'Backend Engineer',
+    name: 'Expense 3',
+    category: 'Category 3',
+    amount: 1200.00,
+    description: 'Description 3',
+    expenseDate: '25th Oct 2025',
+    status: 'Approved',
     submittedAt: '25th Oct 2025'
   }
 ];
