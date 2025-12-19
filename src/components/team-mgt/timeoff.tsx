@@ -11,23 +11,92 @@ import { StatusModal } from "./status-modal";
 import { BookmarkMinusIcon } from "lucide-react";
 import { DetailsConfig } from "./details.types";
 import { DetailsView } from "./details-view";
+import { SearchFilterBar } from "@/app/app/team-management/components/SearchFilterBar";
+import { Pagination } from "@/app/app/team-management/components/Pagination";
+import { FilterModal } from "@/app/app/team-management/components/FilterModal";
+import { useSort } from "@/hooks/use-sort";
+import Image from "next/image";
 
 function TeamMgtTimeoff() {
     const [selectedTimeoff, setSelectedTimeoff] = useState<Timeoff | null>(null);
     const [showStatusModal, setShowStatusModal] = useState(false);
     const handleStatusModal = (show: boolean) => setShowStatusModal(show);
+    const [isFilterOpen, setIsFilterOpen] = useState(false);
+
+    // use-sort hook
+    const {
+        data: paginatedTimeoffs,
+        currentPage,
+        setCurrentPage,
+        totalPages,
+        searchQuery,
+        setSearchQuery,
+        filters,
+        setFilters,
+        totalItems,
+        itemsPerPage,
+    } = useSort({
+        data: timeoffs,
+        searchKeys: ["employeeName", "type"],
+        initialFilters: {
+            status: "All",
+        },
+        itemsPerPage: 10,
+    });
+
+    const handleFilterApply = (newFilters: Record<string, string>) => {
+        setFilters(newFilters);
+    };
+
+    const filterConfig = [
+        {
+            key: "status",
+            label: "Status",
+            options: [
+                { label: "Pending", value: "Pending" },
+                { label: "Approved", value: "Approved" },
+                { label: "Rejected", value: "Rejected" },
+            ],
+        },
+    ];
 
   const TimeoffList = () => {
     return (
         <section>
       <div className="bg-white sm:bg-white p-4 rounded-lg">
-        <div className="space-y-4 mb-6">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
             <h2 className="text-base font-semibold text-gray-900">
-                Expense requests
+                Time off requests
             </h2>
+             <div className="flex items-center gap-3 w-full md:w-auto">
+                <div className="flex-1 md:flex-initial md:min-w-64">
+                  <SearchFilterBar
+                    searchQuery={searchQuery}
+                    onSearchChange={setSearchQuery}
+                    onFilterClick={() => setIsFilterOpen(true)}
+                  />
+                </div>
+            </div>
         </div>
 
-        {timeoffs.length > 0 ? (
+        {totalItems === 0 && (searchQuery || filters.status !== "All") ? (
+             <div className="bg-white rounded-lg border border-gray-200 min-h-96">
+                <div className="flex flex-col items-center justify-center py-20 px-4">
+                  <Image
+                    src="/search-paper.svg"
+                    alt="No records"
+                    width={200}
+                    height={200}
+                  />
+                  <h3 className="text-xl font-semibold text-gray-800 mb-2">
+                    No requests found
+                  </h3>
+                  <p className="text-gray-500 text-center max-w-sm">
+                    Try adjusting your search or filter criteria
+                  </p>
+                </div>
+              </div>
+        ) : totalItems > 0 ? (
           <div className="overflow-x-auto">
             <table className="min-w-full">
               <thead className="hidden md:table-header-group ltr:text-left rtl:text-right bg-gray-50 rounded-t-lg text-xs font-medium">
@@ -51,9 +120,9 @@ function TeamMgtTimeoff() {
               </thead>
 
               <tbody className="divide-y divide-gray-200">
-                {timeoffs.map((timeoff, index) => (
+                {paginatedTimeoffs.map((timeoff, index) => (
                 <tr className="*:text-[#17171C] *:first:font-medium cursor-pointer" key={index} onClick={() => setSelectedTimeoff(timeoff)}>
-                  <td className="hidden md:table-cell px-3 py-4 whitespace-nowrap">{index + 1}</td>
+                  <td className="hidden md:table-cell px-3 py-4 whitespace-nowrap">{(currentPage - 1) * itemsPerPage + index + 1}</td>
                   {/* includes employee name, role, picture */}
                   <td className="hidden md:table-cell px-3 py-4 w-52 md:w-auto">
                     <div className="flex items-center gap-2">
@@ -103,6 +172,18 @@ function TeamMgtTimeoff() {
                 ))}
               </tbody>
             </table>
+
+             {totalPages > 1 && (
+                <div className="border-t border-gray-200 mt-4">
+                  <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    totalItems={totalItems}
+                    itemsPerPage={itemsPerPage}
+                    onPageChange={setCurrentPage}
+                  />
+                </div>
+              )}
           </div>
         ) : (
           <EmptyState
@@ -111,6 +192,14 @@ function TeamMgtTimeoff() {
           />
         )}
       </div>
+
+       <FilterModal
+        isOpen={isFilterOpen}
+        onClose={() => setIsFilterOpen(false)}
+        filters={filters}
+        onApply={handleFilterApply}
+        filterConfiguration={filterConfig}
+      />
     </section>
     );
   }

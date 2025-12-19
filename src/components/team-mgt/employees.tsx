@@ -44,9 +44,28 @@ const TeamMgtEmployees: React.FC<TeamMgtEmployeesProps> = ({ employees }) => {
     (emp) => emp.status === "Active"
   ).length;
 
-  const handleFilterApply = (newFilters: { status: string; type: string }) => {
+  const handleFilterApply = (newFilters: Record<string, string>) => {
     setFilters(newFilters);
   };
+
+  const employeeFilterConfig = [
+    {
+      key: "status",
+      label: "Status",
+      options: [
+        { label: "Active", value: "Active" },
+        { label: "Inactive", value: "Inactive" },
+      ],
+    },
+    {
+      key: "type",
+      label: "Type",
+      options: [
+        { label: "Freelancer", value: "Freelancer" },
+        { label: "Contractor", value: "Contractor" },
+      ],
+    },
+  ];
 
   // Show empty state if no employees passed (handled by parent usually, but safety check)
   if (employees.length === 0) {
@@ -116,8 +135,9 @@ const TeamMgtEmployees: React.FC<TeamMgtEmployeesProps> = ({ employees }) => {
       <FilterModal
         isOpen={isFilterOpen}
         onClose={() => setIsFilterOpen(false)}
-        filters={filters as { status: string; type: string }}
+        filters={filters}
         onApply={handleFilterApply}
+        filterConfiguration={employeeFilterConfig}
       />
     </>
   );

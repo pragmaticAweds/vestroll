@@ -1,7 +1,6 @@
 // This is the main dashboard component that orchestrates everything.
 "use client";
 import React, { useState } from "react";
-import Image from "next/image";
 
 // Import all our new components
 import { NavigationTabs } from "./components/NavigationTabs";
