@@ -116,7 +116,7 @@ const ForgotPasswordForm: React.FC = () => {
           <div className="mt-8 text-center">
             <Link
               href="/"
-              className="text-[#5E2A8C] hover:text-[#4A1F73] font-medium text-base transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#5E2A8C] focus:ring-offset-2 focus:ring-offset-white rounded"
+              className="text-[#5E2A8C] hover:text-[#4A1F73] font-medium text-base transition-colors duration-200 focus:outline-none "
             >
               Back to login
             </Link>

@@ -78,8 +78,6 @@ export default function ForgotPasswordPage({
   return (
     <div className="w-full min-h-screen bg-white">
       <div className="flex flex-col lg:flex-row">
-        
-
         {/* Right Side - Form Section */}
         <div className="flex flex-col flex-1">
           <div className="flex items-center justify-center flex-1 px-4 py-8 sm:px-6 lg:px-8">

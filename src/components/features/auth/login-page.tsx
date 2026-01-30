@@ -140,7 +140,7 @@ export default function LoginPage({
               <div className="flex flex-wrap items-center justify-end gap-2">
                 <Link
                   href="/forgot-password"
-                  className="text-[16px] text-[#5E2A8C] font-semibold hover:text-purple-800 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 rounded"
+                  className="text-[16px] text-[#5E2A8C] font-semibold hover:text-purple-800 focus:outline-none "
                 >
                   Forgot password?
                 </Link>
@@ -230,7 +230,7 @@ export default function LoginPage({
                   New to VestRoll?
                   <Link
                     href="/register"
-                    className="font-semibold text-[16px] text-purple-700 hover:text-purple-800 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 rounded"
+                    className="font-semibold text-[16px] text-purple-700 hover:text-purple-800 focus:outline-none "
                   >
                     Create Account
                   </Link>

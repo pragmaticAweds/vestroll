@@ -82,12 +82,15 @@ export default function Register() {
     if (!validateForm()) return;
 
     // Store registration data in localStorage
-    localStorage.setItem('registrationData', JSON.stringify({
-      firstName: formData.firstName,
-      lastName: formData.lastName,
-      businessEmail: formData.businessEmail,
-      step: 1
-    }));
+    localStorage.setItem(
+      "registrationData",
+      JSON.stringify({
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        businessEmail: formData.businessEmail,
+        step: 1,
+      }),
+    );
 
     clearError();
     try {
@@ -266,7 +269,7 @@ export default function Register() {
                 href="/login"
                 className="font-semibold text-[16px] text-purple-700 hover:text-purple-800"
               >
-                Logi
+                Login
               </a>
             </p>
           </div>
