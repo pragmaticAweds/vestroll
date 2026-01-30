@@ -7,7 +7,7 @@ export class SessionManagementService {
   static async createSession(
     userId: string,
     refreshToken: string,
-    deviceInfo: any,
+    deviceInfo: unknown,
     expiresAt: Date,
     sessionId?: string
   ) {
