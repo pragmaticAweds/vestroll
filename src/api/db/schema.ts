@@ -2,6 +2,7 @@ import { pgTable, uuid, varchar, timestamp, integer, boolean, pgEnum, text } fro
 
 export const userStatusEnum = pgEnum("user_status", ["pending_verification", "active", "suspended"]);
 export const twoFactorMethodEnum = pgEnum("two_factor_method", ["totp", "backup_code"]);
+export const oauthProviderEnum = pgEnum("oauth_provider", ["google", "apple"]);
 
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -10,13 +11,17 @@ export const users = pgTable("users", {
   email: varchar("email", { length: 255 }).notNull().unique(),
   passwordHash: varchar("password_hash", { length: 255 }),
   status: userStatusEnum("status").default("pending_verification").notNull(),
-  // Two-Factor Authentication fields
   twoFactorEnabled: boolean("two_factor_enabled").default(false).notNull(),
-  twoFactorSecret: text("two_factor_secret"), // Encrypted TOTP secret
+  twoFactorSecret: text("two_factor_secret"),
   twoFactorEnabledAt: timestamp("two_factor_enabled_at"),
   // Account lockout fields
   failedTwoFactorAttempts: integer("failed_two_factor_attempts").default(0).notNull(),
   twoFactorLockoutUntil: timestamp("two_factor_lockout_until"),
+  lastLoginAt: timestamp("last_login_at"),
+  failedLoginAttempts: integer("failed_login_attempts").default(0).notNull(),
+  lockedUntil: timestamp("locked_until"),
+  oauthProvider: oauthProviderEnum("oauth_provider"),
+  oauthId: varchar("oauth_id", { length: 255 }),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
@@ -31,7 +36,6 @@ export const emailVerifications = pgTable("email_verifications", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
-// Backup codes for 2FA recovery
 export const backupCodes = pgTable("backup_codes", {
   id: uuid("id").primaryKey().defaultRandom(),
   userId: uuid("user_id").references(() => users.id, { onDelete: "cascade" }).notNull(),
@@ -41,18 +45,16 @@ export const backupCodes = pgTable("backup_codes", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
-// Security logging for 2FA events
 export const twoFactorAttempts = pgTable("two_factor_attempts", {
   id: uuid("id").primaryKey().defaultRandom(),
   userId: uuid("user_id").references(() => users.id, { onDelete: "cascade" }).notNull(),
   success: boolean("success").notNull(),
   method: twoFactorMethodEnum("method").notNull(),
-  ipAddress: varchar("ip_address", { length: 45 }), // IPv6 max length
+  ipAddress: varchar("ip_address", { length: 45 }),
   userAgent: text("user_agent"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
-// Trusted devices for optional 2FA bypass
 export const trustedDevices = pgTable("trusted_devices", {
   id: uuid("id").primaryKey().defaultRandom(),
   userId: uuid("user_id").references(() => users.id, { onDelete: "cascade" }).notNull(),
@@ -62,5 +64,25 @@ export const trustedDevices = pgTable("trusted_devices", {
   userAgent: text("user_agent"),
   expiresAt: timestamp("expires_at").notNull(),
   lastUsedAt: timestamp("last_used_at"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const sessions = pgTable("sessions", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id").references(() => users.id, { onDelete: "cascade" }).notNull(),
+  refreshTokenHash: varchar("refresh_token_hash", { length: 255 }).notNull(),
+  deviceInfo: text("device_info"),
+  expiresAt: timestamp("expires_at").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  lastUsedAt: timestamp("last_used_at"),
+});
+
+export const loginAttempts = pgTable("login_attempts", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  email: varchar("email", { length: 255 }).notNull(),
+  ipAddress: varchar("ip_address", { length: 45 }),
+  userAgent: text("user_agent"),
+  success: boolean("success").notNull(),
+  failureReason: text("failure_reason"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
