@@ -33,7 +33,7 @@ export class JWTTokenService {
   }
 
   static async generateRefreshToken(
-    payload: { userId: string; email: string },
+    payload: { userId: string; email: string; sessionId?: string },
     rememberMe: boolean = false
   ): Promise<string> {
     const key = await this.getPrivateKey();
@@ -44,6 +44,20 @@ export class JWTTokenService {
       .setProtectedHeader({ alg })
       .setIssuedAt()
       .setExpirationTime(expiry)
+      .sign(key);
+  }
+
+  static async generateRotatedRefreshToken(
+    payload: { userId: string; email: string; sessionId?: string },
+    exp: number
+  ): Promise<string> {
+    const key = await this.getPrivateKey();
+    const alg = key instanceof Uint8Array ? "HS256" : "RS256";
+
+    return await new jose.SignJWT(payload)
+      .setProtectedHeader({ alg })
+      .setIssuedAt()
+      .setExpirationTime(exp) // Uses absolute timestamp
       .sign(key);
   }
 

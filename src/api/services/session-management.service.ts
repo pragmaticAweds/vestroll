@@ -7,12 +7,14 @@ export class SessionManagementService {
   static async createSession(
     userId: string,
     refreshToken: string,
-    deviceInfo: any,
-    expiresAt: Date
+    deviceInfo: unknown,
+    expiresAt: Date,
+    sessionId?: string
   ) {
     const refreshTokenHash = await PasswordVerificationService.hash(refreshToken);
-    
+
     const [session] = await db.insert(sessions).values({
+      ...(sessionId ? { id: sessionId } : {}),
       userId,
       refreshTokenHash,
       deviceInfo: deviceInfo ? JSON.stringify(deviceInfo) : null,

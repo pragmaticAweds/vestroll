@@ -1,12 +1,11 @@
 import { db, emailVerifications, users } from "../db";
+import crypto from "crypto";
 import { UserService } from "./user.service";
 import { OTPService } from "./otp.service";
-import { 
-  ConflictError, 
-  UnauthorizedError, 
-  ForbiddenError, 
-  NotFoundError, 
-  ValidationError,
+import {
+  ConflictError,
+  UnauthorizedError,
+  ForbiddenError,
   TooManyRequestsError
 } from "../utils/errors";
 import { PasswordVerificationService } from "./password-verification.service";
@@ -42,7 +41,7 @@ export class AuthService {
         expiresAt,
       });
 
-      console.log(`[Email Mock] Sending OTP ${otp} to ${data.email}`);
+      console.log(`[Email Mock] Sending OTP ${otp} to ${data.email} `);
 
       return {
         userId: user.id,
@@ -87,7 +86,7 @@ export class AuthService {
         success: false,
         failureReason: "Account locked",
       });
-      throw new ForbiddenError(`Account is temporarily locked. Try again after ${unlockTime}`);
+      throw new ForbiddenError(`Account is temporarily locked.Try again after ${unlockTime} `);
     }
 
     if (user.status !== "active") {
@@ -115,15 +114,18 @@ export class AuthService {
     }
 
     await AccountLockoutService.resetFailures(user.id);
-    
-    const accessToken = await JWTTokenService.generateAccessToken({ 
-      userId: user.id, 
-      email: user.email 
+
+    const sessionId = crypto.randomUUID();
+
+    const accessToken = await JWTTokenService.generateAccessToken({
+      userId: user.id,
+      email: user.email
     });
-    
-    const refreshToken = await JWTTokenService.generateRefreshToken({ 
-      userId: user.id, 
-      email: user.email 
+
+    const refreshToken = await JWTTokenService.generateRefreshToken({
+      userId: user.id,
+      email: user.email,
+      sessionId
     }, rememberMe);
 
     const expiresAt = new Date(Date.now() + (rememberMe ? 30 : 7) * 24 * 60 * 60 * 1000);
@@ -131,7 +133,8 @@ export class AuthService {
       user.id,
       refreshToken,
       metadata.userAgent,
-      expiresAt
+      expiresAt,
+      sessionId
     );
 
     await db.update(users)
