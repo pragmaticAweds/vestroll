@@ -2,7 +2,7 @@ export class AppError extends Error {
   constructor(
     public message: string,
     public statusCode: number = 500,
-    public errors: Record<string, unknown> | null = null
+    public errors: Record<string, unknown> | null = null,
   ) {
     super(message);
     this.name = this.constructor.name;
@@ -11,7 +11,10 @@ export class AppError extends Error {
 }
 
 export class ValidationError extends AppError {
-  constructor(message: string = "Validation failed", errors: Record<string, unknown> | null = null) {
+  constructor(
+    message: string = "Validation failed",
+    errors: Record<string, unknown> | null = null,
+  ) {
     super(message, 400, errors);
   }
 }
@@ -35,7 +38,10 @@ export class UnauthorizedError extends AppError {
 }
 
 export class OAuthError extends AppError {
-  constructor(message: string = "OAuth authentication failed", errors: Record<string, unknown> | null = null) {
+  constructor(
+    message: string = "OAuth authentication failed",
+    errors: Record<string, unknown> | null = null,
+  ) {
     super(message, 401, errors);
   }
 }
@@ -64,12 +70,6 @@ export class IssuerMismatchError extends OAuthError {
   }
 }
 
-export class ForbiddenError extends AppError {
-  constructor(message: string = "Access forbidden") {
-    super(message, 403);
-  }
-}
-
 export class NotFoundError extends AppError {
   constructor(message: string = "Resource not found") {
     super(message, 404);
@@ -77,16 +77,25 @@ export class NotFoundError extends AppError {
 }
 
 export class BadRequestError extends AppError {
-  constructor(message: string = "Bad request") {
-    super(message, 400);
+  constructor(
+    message: string = "Bad request",
+    errors: Record<string, unknown> | null = null,
+  ) {
+    super(message, 400, errors);
   }
 }
 
 export class TooManyRequestsError extends AppError {
   constructor(
     message: string = "Too many requests",
-    public retryAfter?: number
+    public retryAfter?: number,
   ) {
     super(message, 429);
+  }
+}
+
+export class ForbiddenError extends AppError {
+  constructor(message: string = "Access forbidden") {
+    super(message, 403);
   }
 }

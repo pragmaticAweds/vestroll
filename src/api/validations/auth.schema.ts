@@ -39,3 +39,16 @@ export const AppleOAuthSchema = z.object({
 });
 
 export type AppleOAuthInput = z.infer<typeof AppleOAuthSchema>;
+
+export const VerifyEmailSchema = z.object({
+  email: z
+    .string()
+    .transform((email) => email.toLowerCase().trim())
+    .pipe(z.string().email("Invalid email format")),
+  otp: z
+    .string()
+    .length(6, "OTP must be exactly 6 digits")
+    .regex(/^\d{6}$/, "OTP must contain only digits"),
+});
+
+export type VerifyEmailInput = z.infer<typeof VerifyEmailSchema>;

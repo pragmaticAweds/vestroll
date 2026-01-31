@@ -1,12 +1,13 @@
 import { db, emailVerifications, users } from "../db";
 import crypto from "crypto";
+import { OTP_EXPIRATION_MINUTES } from "./email-verification.service";
 import { UserService } from "./user.service";
 import { OTPService } from "./otp.service";
 import {
   ConflictError,
   UnauthorizedError,
   ForbiddenError,
-  TooManyRequestsError
+  TooManyRequestsError,
 } from "../utils/errors";
 import { PasswordVerificationService } from "./password-verification.service";
 import { JWTTokenService } from "./jwt-token.service";
@@ -34,7 +35,9 @@ export class AuthService {
       const otp = OTPService.generateOTP();
       const otpHash = await OTPService.hashOTP(otp);
 
-      const expiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
+      const expiresAt = new Date(
+        Date.now() + OTP_EXPIRATION_MINUTES * 60 * 1000,
+      );
       await tx.insert(emailVerifications).values({
         userId: user.id,
         otpHash,
@@ -51,10 +54,16 @@ export class AuthService {
     });
   }
 
-  static async login(data: LoginInput, metadata: { ipAddress?: string; userAgent?: string }) {
+  static async login(
+    data: LoginInput,
+    metadata: { ipAddress?: string; userAgent?: string },
+  ) {
     const { email, password, rememberMe } = data;
 
-    if (metadata.ipAddress && (await RateLimitService.isRateLimited(metadata.ipAddress))) {
+    if (
+      metadata.ipAddress &&
+      (await RateLimitService.isRateLimited(metadata.ipAddress))
+    ) {
       await LoginAttemptService.logAttempt({
         email,
         ipAddress: metadata.ipAddress,
@@ -62,7 +71,9 @@ export class AuthService {
         success: false,
         failureReason: "Rate limit exceeded",
       });
-      throw new TooManyRequestsError("Too many login attempts. Please try again in 15 minutes.");
+      throw new TooManyRequestsError(
+        "Too many login attempts. Please try again in 15 minutes.",
+      );
     }
 
     const user = await UserService.findByEmail(email);
@@ -86,7 +97,9 @@ export class AuthService {
         success: false,
         failureReason: "Account locked",
       });
-      throw new ForbiddenError(`Account is temporarily locked.Try again after ${unlockTime} `);
+      throw new ForbiddenError(
+        `Account is temporarily locked.Try again after ${unlockTime} `,
+      );
     }
 
     if (user.status !== "active") {
@@ -97,10 +110,15 @@ export class AuthService {
         success: false,
         failureReason: "Unverified account",
       });
-      throw new ForbiddenError("Account verification pending. Please check your email.");
+      throw new ForbiddenError(
+        "Account verification pending. Please check your email.",
+      );
     }
 
-    const isPasswordValid = await PasswordVerificationService.verify(password, user.passwordHash || "");
+    const isPasswordValid = await PasswordVerificationService.verify(
+      password,
+      user.passwordHash || "",
+    );
     if (!isPasswordValid) {
       await AccountLockoutService.incrementFailures(user.id);
       await LoginAttemptService.logAttempt({
@@ -119,25 +137,31 @@ export class AuthService {
 
     const accessToken = await JWTTokenService.generateAccessToken({
       userId: user.id,
-      email: user.email
+      email: user.email,
     });
 
-    const refreshToken = await JWTTokenService.generateRefreshToken({
-      userId: user.id,
-      email: user.email,
-      sessionId
-    }, rememberMe);
+    const refreshToken = await JWTTokenService.generateRefreshToken(
+      {
+        userId: user.id,
+        email: user.email,
+        sessionId,
+      },
+      rememberMe,
+    );
 
-    const expiresAt = new Date(Date.now() + (rememberMe ? 30 : 7) * 24 * 60 * 60 * 1000);
+    const expiresAt = new Date(
+      Date.now() + (rememberMe ? 30 : 7) * 24 * 60 * 60 * 1000,
+    );
     await SessionManagementService.createSession(
       user.id,
       refreshToken,
       metadata.userAgent,
       expiresAt,
-      sessionId
+      sessionId,
     );
 
-    await db.update(users)
+    await db
+      .update(users)
       .set({ lastLoginAt: new Date() })
       .where(eq(users.id, user.id));
 
@@ -156,7 +180,7 @@ export class AuthService {
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
-      }
+      },
     };
   }
 }
