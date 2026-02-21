@@ -1,4 +1,5 @@
 import { pgTable, uuid, varchar, timestamp, integer, boolean, pgEnum, text } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
 
 export const userStatusEnum = pgEnum("user_status", ["pending_verification", "active", "suspended"]);
 export const twoFactorMethodEnum = pgEnum("two_factor_method", ["totp", "backup_code"]);
@@ -14,6 +15,7 @@ export const users = pgTable("users", {
   role: varchar("role", { length: 100 }),
   organizationName: varchar("organization_name", { length: 255 }),
   status: userStatusEnum("status").default("pending_verification").notNull(),
+  organizationId: uuid("organization_id").references(() => organizations.id, { onDelete: "cascade" }),
   // Two-factor authentication fields
   twoFactorEnabled: boolean("two_factor_enabled").default(false).notNull(),
   twoFactorSecret: text("two_factor_secret"),
@@ -30,6 +32,24 @@ export const users = pgTable("users", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
+
+export const organizations = pgTable("organizations", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: varchar("name", { length: 255 }).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const userRelations = relations(users, (helpers: any) => ({
+  organization: helpers.one(organizations, {
+    fields: [users.organizationId],
+    references: [organizations.id],
+  }),
+}));
+
+export const organizationRelations = relations(organizations, (helpers: any) => ({
+  users: helpers.many(users),
+}));
 
 export const emailVerifications = pgTable("email_verifications", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -90,4 +110,24 @@ export const loginAttempts = pgTable("login_attempts", {
   success: boolean("success").notNull(),
   failureReason: text("failure_reason"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const kybStatusEnum = pgEnum("kyb_status", ["pending", "approved", "rejected"]);
+
+export const kybVerifications = pgTable("kyb_verifications", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id").references(() => users.id, { onDelete: "cascade" }).notNull(),
+  registrationType: varchar("registration_type", { length: 255 }).notNull(),
+  registrationNo: varchar("registration_no", { length: 255 }).notNull(),
+  incorporationCertificatePath: varchar("incorporation_certificate_path", { length: 512 }).notNull(),
+  incorporationCertificateUrl: varchar("incorporation_certificate_url", { length: 1024 }).notNull(),
+  memorandumArticlePath: varchar("memorandum_article_path", { length: 512 }).notNull(),
+  memorandumArticleUrl: varchar("memorandum_article_url", { length: 1024 }).notNull(),
+  formC02C07Path: varchar("form_c02_c07_path", { length: 512 }),
+  formC02C07Url: varchar("form_c02_c07_url", { length: 1024 }),
+  status: kybStatusEnum("status").default("pending").notNull(),
+  rejectionReason: text("rejection_reason"),
+  reviewedAt: timestamp("reviewed_at"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
