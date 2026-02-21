@@ -43,3 +43,5 @@ next-env.d.ts
 # package manager lock files (keep only one)
 pnpm-lock.yaml
 bun.lock
+*.claude
+*CLAUDE.md

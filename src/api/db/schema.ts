@@ -88,3 +88,23 @@ export const loginAttempts = pgTable("login_attempts", {
   failureReason: text("failure_reason"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
+
+export const kybStatusEnum = pgEnum("kyb_status", ["pending", "approved", "rejected"]);
+
+export const kybVerifications = pgTable("kyb_verifications", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id").references(() => users.id, { onDelete: "cascade" }).notNull(),
+  registrationType: varchar("registration_type", { length: 255 }).notNull(),
+  registrationNo: varchar("registration_no", { length: 255 }).notNull(),
+  incorporationCertificatePath: varchar("incorporation_certificate_path", { length: 512 }).notNull(),
+  incorporationCertificateUrl: varchar("incorporation_certificate_url", { length: 1024 }).notNull(),
+  memorandumArticlePath: varchar("memorandum_article_path", { length: 512 }).notNull(),
+  memorandumArticleUrl: varchar("memorandum_article_url", { length: 1024 }).notNull(),
+  formC02C07Path: varchar("form_c02_c07_path", { length: 512 }),
+  formC02C07Url: varchar("form_c02_c07_url", { length: 1024 }),
+  status: kybStatusEnum("status").default("pending").notNull(),
+  rejectionReason: text("rejection_reason"),
+  reviewedAt: timestamp("reviewed_at"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
