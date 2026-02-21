@@ -3,6 +3,7 @@ import { pgTable, uuid, varchar, timestamp, integer, boolean, pgEnum, text } fro
 export const userStatusEnum = pgEnum("user_status", ["pending_verification", "active", "suspended"]);
 export const twoFactorMethodEnum = pgEnum("two_factor_method", ["totp", "backup_code"]);
 export const oauthProviderEnum = pgEnum("oauth_provider", ["google", "apple"]);
+export const kybStatusEnum = pgEnum("kyb_status", ["not_started", "pending", "verified", "rejected"]);
 
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -87,4 +88,15 @@ export const loginAttempts = pgTable("login_attempts", {
   success: boolean("success").notNull(),
   failureReason: text("failure_reason"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const kybVerifications = pgTable("kyb_verifications", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  // TODO: Migrate to organization_id when organizations table is introduced
+  userId: uuid("user_id").references(() => users.id, { onDelete: "cascade" }).notNull().unique(),
+  status: kybStatusEnum("status").default("pending").notNull(),
+  rejectionReason: text("rejection_reason"),
+  submittedAt: timestamp("submitted_at"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
