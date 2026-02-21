@@ -131,6 +131,26 @@ VestRoll plays a pivotal role in the **Stellar ecosystem** by:
    ```bash
    pnpm dev
    ```
+   The app will be available at `http://localhost:3000`.
+
+### Database Setup
+
+1. Ensure PostgreSQL is running and accessible via your `DATABASE_URL`.
+
+2. Push the database schema:
+   ```bash
+   pnpm db:push
+   ```
+   Alternatively, to generate migrations first:
+   ```bash
+   pnpm db:generate
+   pnpm db:migrate
+   ```
+
+3. (Optional) View your database with Drizzle Studio:
+   ```bash
+   pnpm db:studio
+   ```
 
 ### Available Scripts
 
@@ -138,6 +158,12 @@ VestRoll plays a pivotal role in the **Stellar ecosystem** by:
 - `pnpm build`: Builds the application for production.
 - `pnpm start`: Starts the production server.
 - `pnpm lint`: Runs ESLint for code quality checks.
+- `pnpm test`: Runs unit tests with Vitest.
+- `pnpm test:watch`: Runs tests in watch mode.
+- `pnpm db:generate`: Generate Drizzle migrations.
+- `pnpm db:migrate`: Apply pending migrations.
+- `pnpm db:push`: Sync schema with the database.
+- `pnpm db:studio`: Open Drizzle Studio for database inspection.
 
 ---
 
