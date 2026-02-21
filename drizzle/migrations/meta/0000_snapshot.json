@@ -1,5 +1,5 @@
 {
-  "id": "6463538b-850e-4f59-b5c7-97951aa7c3f3",
+  "id": "d96bc095-6b84-4573-a7aa-888867bb9705",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -505,6 +505,24 @@
         },
         "password_hash": {
           "name": "password_hash",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "avatar_url": {
+          "name": "avatar_url",
+          "type": "varchar(500)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "role": {
+          "name": "role",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "organization_name": {
+          "name": "organization_name",
           "type": "varchar(255)",
           "primaryKey": false,
           "notNull": false
