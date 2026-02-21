@@ -1,5 +1,6 @@
 CREATE TYPE "public"."employee_status" AS ENUM('Active', 'Inactive');--> statement-breakpoint
 CREATE TYPE "public"."employee_type" AS ENUM('Freelancer', 'Contractor');--> statement-breakpoint
+CREATE TYPE "public"."kyb_status" AS ENUM('not_started', 'pending', 'verified', 'rejected');--> statement-breakpoint
 CREATE TYPE "public"."oauth_provider" AS ENUM('google', 'apple');--> statement-breakpoint
 CREATE TYPE "public"."two_factor_method" AS ENUM('totp', 'backup_code');--> statement-breakpoint
 CREATE TYPE "public"."user_status" AS ENUM('pending_verification', 'active', 'suspended');--> statement-breakpoint
@@ -36,6 +37,26 @@ CREATE TABLE "employees" (
 	"user_id" uuid,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE "kyb_verifications" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"user_id" uuid NOT NULL,
+	"registration_type" varchar(255) NOT NULL,
+	"registration_no" varchar(255) NOT NULL,
+	"incorporation_certificate_path" varchar(512) NOT NULL,
+	"incorporation_certificate_url" varchar(1024) NOT NULL,
+	"memorandum_article_path" varchar(512) NOT NULL,
+	"memorandum_article_url" varchar(1024) NOT NULL,
+	"form_c02_c07_path" varchar(512),
+	"form_c02_c07_url" varchar(1024),
+	"status" "kyb_status" DEFAULT 'pending' NOT NULL,
+	"rejection_reason" text,
+	"submitted_at" timestamp,
+	"reviewed_at" timestamp,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "kyb_verifications_user_id_unique" UNIQUE("user_id")
 );
 --> statement-breakpoint
 CREATE TABLE "login_attempts" (
@@ -94,7 +115,11 @@ CREATE TABLE "users" (
 	"last_name" varchar(255) NOT NULL,
 	"email" varchar(255) NOT NULL,
 	"password_hash" varchar(255),
+	"avatar_url" varchar(500),
+	"role" varchar(100),
+	"organization_name" varchar(255),
 	"status" "user_status" DEFAULT 'pending_verification' NOT NULL,
+	"organization_id" uuid,
 	"two_factor_enabled" boolean DEFAULT false NOT NULL,
 	"two_factor_secret" text,
 	"two_factor_enabled_at" timestamp,
@@ -104,7 +129,6 @@ CREATE TABLE "users" (
 	"locked_until" timestamp,
 	"oauth_provider" "oauth_provider",
 	"oauth_id" varchar(255),
-	"organization_id" uuid,
 	"last_login_at" timestamp,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
@@ -115,8 +139,9 @@ ALTER TABLE "backup_codes" ADD CONSTRAINT "backup_codes_user_id_users_id_fk" FOR
 ALTER TABLE "email_verifications" ADD CONSTRAINT "email_verifications_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "employees" ADD CONSTRAINT "employees_organization_id_organizations_id_fk" FOREIGN KEY ("organization_id") REFERENCES "public"."organizations"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "employees" ADD CONSTRAINT "employees_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "kyb_verifications" ADD CONSTRAINT "kyb_verifications_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "sessions" ADD CONSTRAINT "sessions_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "trusted_devices" ADD CONSTRAINT "trusted_devices_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "two_factor_attempts" ADD CONSTRAINT "two_factor_attempts_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "users" ADD CONSTRAINT "users_organization_id_organizations_id_fk" FOREIGN KEY ("organization_id") REFERENCES "public"."organizations"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "users" ADD CONSTRAINT "users_organization_id_organizations_id_fk" FOREIGN KEY ("organization_id") REFERENCES "public"."organizations"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 CREATE INDEX "employees_organization_id_idx" ON "employees" USING btree ("organization_id");
