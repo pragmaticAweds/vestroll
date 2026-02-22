@@ -18,6 +18,8 @@ interface TableProps<T = any> {
   searchPlaceholder?: string;
   showCheckbox?: boolean;
   showFilterHeader?: boolean;
+  showSearch?: boolean;
+  seeAllHref?: string;
 
   // Pagination
   showPagination?: boolean;
@@ -55,6 +57,8 @@ const Table = <T extends Record<string, any>>({
   searchPlaceholder = "Search...",
   showCheckbox = true,
   showFilterHeader = true,
+  showSearch = true,
+  seeAllHref,
   showPagination = false,
   itemsPerPage: initialItemsPerPage = 10,
   showResultsPerPage = false,
@@ -143,6 +147,8 @@ const Table = <T extends Record<string, any>>({
               setSearch={setSearch}
               showModal={showModal}
               searchPlaceholder={searchPlaceholder}
+              showSearch={showSearch}
+              seeAllHref={seeAllHref}
               SearchIcon={SearchIcon}
               FilterIcon={FilterIcon}
             />
