@@ -21,30 +21,14 @@ export const twoFactorMethodEnum = pgEnum("two_factor_method", [
   "backup_code",
 ]);
 export const oauthProviderEnum = pgEnum("oauth_provider", ["google", "apple"]);
-export const kybStatusEnum = pgEnum("kyb_status", ["not_started", "pending", "verified", "rejected"]);
-export const leaveStatusEnum = pgEnum("leave_status", ["Pending", "Approved", "Rejected", "Cancelled",]);
-export const leaveTypeEnum = pgEnum("leave_type", ["vacation", "sick", "personal", "other",]);
-export const contractStatusEnum = pgEnum("contract_status", ["pending_signature", "in_review", "rejected", "active", "completed"]);
-export const contractTypeEnum = pgEnum("contract_type", ["fixed_rate", "pay_as_you_go", "milestone"]);
-export const employeeStatusEnum = pgEnum("employee_status", [
-  "Active",
-  "Inactive",
-]);
-export const employeeTypeEnum = pgEnum("employee_type", [
-  "Freelancer",
-  "Contractor",
-]);
 export const kybStatusEnum = pgEnum("kyb_status", [
   "not_started",
   "pending",
   "verified",
   "rejected",
 ]);
-export const timesheetStatusEnum = pgEnum("timesheet_status", [
-  "Pending",
-  "Approved",
-  "Rejected",
-]);
+export const leaveStatusEnum = pgEnum("leave_status", ["Pending", "Approved", "Rejected", "Cancelled",]);
+export const leaveTypeEnum = pgEnum("leave_type", ["vacation", "sick", "personal", "other",]);
 export const contractStatusEnum = pgEnum("contract_status", [
   "pending_signature",
   "in_review",
@@ -56,6 +40,19 @@ export const contractTypeEnum = pgEnum("contract_type", [
   "fixed_rate",
   "pay_as_you_go",
   "milestone",
+]);
+export const employeeStatusEnum = pgEnum("employee_status", [
+  "Active",
+  "Inactive",
+]);
+export const employeeTypeEnum = pgEnum("employee_type", [
+  "Freelancer",
+  "Contractor",
+]);
+export const timesheetStatusEnum = pgEnum("timesheet_status", [
+  "Pending",
+  "Approved",
+  "Rejected",
 ]);
 export const paymentTypeEnum = pgEnum("payment_type", ["crypto", "fiat"]);
 export const invoiceStatusEnum = pgEnum("invoice_status", [
@@ -328,6 +325,7 @@ export const leaveRequests = pgTable("leave_requests", {
   reviewedByUserId: uuid("reviewed_by_user_id").references(() => users.id, { onDelete: "set null", }),
   reviewedAt: timestamp("reviewed_at"),
   rejectionReason: text("rejection_reason"),
+  submittedAt: timestamp("submitted_at").defaultNow().notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 },
@@ -447,4 +445,16 @@ export const employeeRelations = relations(employees, (helpers: any) => ({
     references: [organizations.id],
   }),
   milestones: helpers.many(milestones),
+  leaveRequests: helpers.many(leaveRequests),
+}));
+
+export const leaveRequestRelations = relations(leaveRequests, (helpers: any) => ({
+  employee: helpers.one(employees, {
+    fields: [leaveRequests.employeeId],
+    references: [employees.id],
+  }),
+  organization: helpers.one(organizations, {
+    fields: [leaveRequests.organizationId],
+    references: [organizations.id],
+  }),
 }));
