@@ -8,6 +8,13 @@
       "when": 1771699440693,
       "tag": "0000_optimal_sage",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1771842610081,
+      "tag": "0001_gifted_shotgun",
+      "breakpoints": true
     }
   ]
 }

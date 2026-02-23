@@ -26,7 +26,7 @@ const navItems: NavItem[] = [
   { name: "Finance", href: "/app/finance", iconSrc: "/wallet.svg" },
   { name: "Payroll", href: "/app/payroll", iconSrc: "/payroll.svg" },
   { name: "Invoices", href: "/app/invoices", iconSrc: "/invoice.svg" },
-  { name: "Settings", href: "/app/settings", Icon: Settings },
+  { name: "Settings", href: "/app/settings", iconSrc: "/Settings.png" },
 ];
 
 function classNames(...classes: Array<string | false | undefined>) {
@@ -57,7 +57,7 @@ export default function Sidebar({
   );
 
   const content = (
-    <div className="flex h-full flex-col px-4 py-6">
+    <div className="flex flex-col h-full px-4 py-6">
       <div className="flex items-center justify-between px-2 mb-10">
         <Link
           href="/"
@@ -72,7 +72,7 @@ export default function Sidebar({
           onClick={onCloseMobile}
           className="lg:hidden rounded-lg p-2 hover:bg-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6d28d9]"
         >
-          <X className="h-5 w-5 text-black" />
+          <X className="w-5 h-5 text-black" />
         </button>
       </div>
 
@@ -80,7 +80,7 @@ export default function Sidebar({
         MENU
       </div>
 
-      <nav className="mt-3 flex-1" aria-label="Primary">
+      <nav className="flex-1 mt-3" aria-label="Primary">
         <ul className="flex flex-col gap-1">
           {navItems.map(({ name, href, Icon, iconSrc }) => {
             const active = isActive(href);
@@ -129,7 +129,7 @@ export default function Sidebar({
           })}
         </ul>
 
-        <div className="mt-50 -mx-4 border-t border-gray-300">
+        <div className="-mx-4 border-t border-gray-300 mt-50">
           <div className="px-4 pt-3 space-y-2">
             <div className="px-4 py-2">
               <ThemeToggle />
@@ -139,7 +139,7 @@ export default function Sidebar({
               className="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm   text-[#b91c1c] hover:bg-red-50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 dark:text-red-400 dark:hover:bg-red-900/20"
               aria-label="Sign out"
             >
-              <LogOut className="h-5 w-5" aria-hidden="true" />
+              <LogOut className="w-5 h-5" aria-hidden="true" />
               <span>Sign out</span>
             </Link>
           </div>
@@ -152,7 +152,7 @@ export default function Sidebar({
   return (
     <>
       <aside className="hidden lg:flex lg:w-72 lg:flex-col lg:border-r lg:border-[#e5e7eb] lg:bg-white dark:lg:bg-gray-900 dark:lg:border-gray-800">
-        <div className="flex h-full flex-col px-4 py-6">
+        <div className="flex flex-col h-full px-4 py-6">
           <div className="flex items-center justify-between px-2 mb-10">
             <Link
               href="/"
@@ -167,7 +167,7 @@ export default function Sidebar({
               onClick={onCloseMobile}
               className="lg:hidden rounded-lg p-2 hover:bg-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6d28d9] dark:hover:bg-gray-800"
             >
-              <X className="h-5 w-5 text-black dark:text-white" />
+              <X className="w-5 h-5 text-black dark:text-white" />
             </button>
           </div>
 
@@ -175,7 +175,7 @@ export default function Sidebar({
             MENU
           </div>
 
-          <nav className="mt-3 flex-1" aria-label="Primary">
+          <nav className="flex-1 mt-3" aria-label="Primary">
             <ul className="flex flex-col gap-1">
               {navItems.map(({ name, href, Icon, iconSrc }) => {
                 const active = isActive(href);
@@ -223,14 +223,14 @@ export default function Sidebar({
               })}
             </ul>
 
-            <div className="mt-50 -mx-4 border-t border-gray-300 dark:border-gray-800">
+            <div className="-mx-4 border-t border-gray-300 mt-50 dark:border-gray-800">
               <div className="px-4 pt-3">
                 <Link
                   href="#"
                   className="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm   text-[#b91c1c] hover:bg-red-50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 dark:hover:bg-red-900/20"
                   aria-label="Sign out"
                 >
-                  <LogOut className="h-5 w-5" aria-hidden="true" />
+                  <LogOut className="w-5 h-5" aria-hidden="true" />
                   <span>Sign out</span>
                 </Link>
               </div>
@@ -255,7 +255,7 @@ export default function Sidebar({
         )}
         aria-label="Mobile sidebar"
       >
-        <div className="flex h-full flex-col px-4 py-6">
+        <div className="flex flex-col h-full px-4 py-6">
           <div className="flex items-center justify-between px-2 mb-10">
             <Link
               href="/"
@@ -270,7 +270,7 @@ export default function Sidebar({
               onClick={onCloseMobile}
               className="lg:hidden rounded-lg p-2 hover:bg-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6d28d9] dark:hover:bg-gray-800"
             >
-              <X className="h-5 w-5 text-black dark:text-white" />
+              <X className="w-5 h-5 text-black dark:text-white" />
             </button>
           </div>
 
@@ -278,7 +278,7 @@ export default function Sidebar({
             MENU
           </div>
 
-          <nav className="mt-3 flex-1" aria-label="Primary">
+          <nav className="flex-1 mt-3" aria-label="Primary">
             <ul className="flex flex-col gap-1">
               {navItems.map(({ name, href, Icon, iconSrc }) => {
                 const active = isActive(href);
@@ -326,7 +326,7 @@ export default function Sidebar({
               })}
             </ul>
 
-            <div className="mt-50 -mx-4 border-t border-gray-300 dark:border-gray-800">
+            <div className="-mx-4 border-t border-gray-300 mt-50 dark:border-gray-800">
               <div className="px-4 pt-3 space-y-2">
                 <div className="px-4 py-2">
                   <ThemeToggle />
@@ -336,7 +336,7 @@ export default function Sidebar({
                   className="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm   text-[#b91c1c] hover:bg-red-50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 dark:hover:bg-red-900/20"
                   aria-label="Sign out"
                 >
-                  <LogOut className="h-5 w-5" aria-hidden="true" />
+                  <LogOut className="w-5 h-5" aria-hidden="true" />
                   <span>Sign out</span>
                 </Link>
               </div>

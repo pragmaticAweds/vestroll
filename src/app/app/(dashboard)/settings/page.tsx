@@ -8,6 +8,7 @@ import {
   GlobeAltIcon,
   ShieldCheckIcon,
 } from "@heroicons/react/24/outline";
+import { ArrowLeft } from "lucide-react";
 
 interface StatProps {
   Icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
@@ -17,15 +18,15 @@ interface StatProps {
 
 function Stat({ Icon, label, value }: StatProps) {
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex flex-col items-center gap-3 sm:flex-row">
       <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#f5f3ff] dark:bg-gray-800">
         <Icon className="h-5 w-5 text-(--violet-base)" />
       </div>
-      <div className="leading-tight">
+      <div className="leading-tight flex flex-col-reverse items-center gap-1.5 text-center sm:items-start sm:text-left">
         <div className="text-xs sm:text-sm text-[#6b7280] dark:text-gray-400">
           {label}
         </div>
-        <div className="text-base sm:text-lg font-semibold text-[#111827] dark:text-gray-100">
+        <div className="text-base sm:text-lg font-semibold text-[#111827] dark:text-gray-100  text-left">
           {value}
         </div>
       </div>
@@ -63,7 +64,7 @@ function FieldRow({ label, value, right }: FieldRowProps) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-3 items-center gap-2 sm:gap-6 px-3 sm:px-4 py-3 rounded-lg bg-[#f8fafc] dark:bg-gray-800/50">
       <div className="text-sm text-[#6b7280] dark:text-gray-400">{label}</div>
-      <div className="sm:col-span-2 flex items-center justify-end gap-3">
+      <div className="flex items-center justify-end gap-3 sm:col-span-2">
         <div className="text-sm sm:text-base text-[#111827] text-right dark:text-gray-200">
           {value ?? <span className="text-[#9ca3af]">--</span>}
         </div>
@@ -72,13 +73,62 @@ function FieldRow({ label, value, right }: FieldRowProps) {
     </div>
   );
 }
+function HeaderTab({
+  tabs,
+  activeTab,
+  setActiveTab,
+}: {
+  tabs: string[];
+  activeTab: string;
+  setActiveTab: (tab: string) => void;
+}) {
+  const handleTabClick = (tab: string) => {
+    setActiveTab(tab);
+  };
+  return (
+    <div className="px-4 pt-6 mb-3 bg-white lg:mb-6">
+      <div>
+        <Link
+          href="/app/settings"
+          className="flex items-center text-sm font-medium text-gray-600 hover:text-gray-900"
+        >
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          Back
+        </Link>
+        <h1 className="mt-1 text-2xl font-bold text-gray-900">Settings </h1>
+      </div>
+      <div className="flex items-center gap-2.5 md:gap-6">
+        {tabs.map((tab) => (
+          <button
+            onClick={() => handleTabClick(tab)}
+            key={tab}
+            className={`inline-block cursor-pointer mt-2 border-b-3 pb-1.5 text-xs sm:text-sm font-medium rounded-t-lg ${
+              tab === activeTab
+                ? "border-b-(--violet-base) "
+                : "text-gray-600 border-b-transparent hover:text-gray-900"
+            }`}
+          >
+            {tab}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export default function Page() {
+  const [activeTab, setActiveTab] = React.useState("Company");
+  const tabs = ["Company", "Permissions", "Hiring templates", "Address book"];
   return (
     <>
-      <div className="rounded-xl border border-[#e5e7eb] bg-white p-4 sm:p-6 shadow-sm dark:bg-gray-900 dark:border-gray-800">
-        <div className="flex flex-col items-center text-center gap-4 md:block sm:items-center sm:justify-start sm:text-left">
-          <div className="md:flex gap-8 items-center">
+      <HeaderTab
+        tabs={tabs}
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+      />
+      <div className="rounded-xl border border-[#e5e7eb] bg-white p-4 sm:p-6 shadow-sm dark:bg-gray-900 dark:border-gray-800 max-w-213 mx-4 mt-4 ">
+        <div className="flex flex-col items-center gap-4 text-center md:block sm:items-center sm:justify-start sm:text-left">
+          <div className="items-center gap-8 md:flex">
             <Image
               src="/touchpoint360.png"
               alt="Touchpoint 360"
@@ -92,7 +142,7 @@ export default function Page() {
                 Touchpoint 360
               </h2>
 
-              <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4 sm:gap-10 pt-4">
+              <div className="flex flex-wrap items-center justify-center gap-5 py-4 sm:gap-4 sm:pt-4 sm:justify-start md:gap-10">
                 <Stat Icon={UsersIcon} label="Active members" value="20" />
                 <div
                   className="hidden sm:block h-10 w-px bg-[#e5e7eb] dark:bg-gray-700"
@@ -114,7 +164,7 @@ export default function Page() {
         </div>
       </div>
 
-      <div className="mt-6">
+      <div className="mx-4 mt-6 max-w-213">
         <SectionCard
           title="Company information"
           action={
@@ -181,14 +231,14 @@ export default function Page() {
         </SectionCard>
       </div>
 
-      <div className="mt-6">
+      <div className="mx-4 mt-6 max-w-213">
         <SectionCard title="Addresses">
           <div className="space-y-4">
             <div>
               <div className="text-sm text-[#6b7280] mb-2 dark:text-gray-400">
                 Billing address
               </div>
-              <div className="flex items-center gap-3 rounded-xl border border-gray-300 px-4 py-4 dark:border-gray-700 dark:bg-gray-800/50">
+              <div className="flex items-center gap-3 px-4 py-4 border border-gray-300 rounded-xl dark:border-gray-700 dark:bg-gray-800/50">
                 <Image
                   src="/warning.svg"
                   width={20}
@@ -211,7 +261,7 @@ export default function Page() {
               <div className="text-sm text-[#6b7280] mb-2 dark:text-gray-400">
                 Registered address
               </div>
-              <div className="flex items-center gap-3 rounded-xl border border-gray-300 px-4 py-4 dark:border-gray-700 dark:bg-gray-800/50">
+              <div className="flex items-center gap-3 px-4 py-4 border border-gray-300 rounded-xl dark:border-gray-700 dark:bg-gray-800/50">
                 <Image
                   src="/warning.svg"
                   width={20}
