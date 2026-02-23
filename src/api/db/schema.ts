@@ -290,6 +290,10 @@ export const expenses = pgTable("expenses", {
   description: text("description"),
   expenseDate: timestamp("expense_date").notNull(),
   status: approvalStatusEnum("status").default("pending").notNull(),
+  approverId: uuid("approver_id").references(() => users.id, { onDelete: "set null" }),
+  processedAt: timestamp("processed_at"),
+  rejectionComment: text("rejection_comment"),
+  readyForPayout: boolean("ready_for_payout").default(false).notNull(),
   submittedAt: timestamp("submitted_at"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
@@ -297,6 +301,18 @@ export const expenses = pgTable("expenses", {
   index("expenses_organization_id_idx").on(table.organizationId),
   index("expenses_status_idx").on(table.status),
 ]);
+
+export const auditLogs = pgTable("audit_logs", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  entityType: varchar("entity_type", { length: 255 }).notNull(),
+  entityId: uuid("entity_id").notNull(),
+  action: varchar("action", { length: 255 }).notNull(),
+  performedBy: uuid("performed_by").references(() => users.id, { onDelete: "set null" }).notNull(),
+  previousValue: text("previous_value"),
+  newValue: text("new_value"),
+  metadata: text("metadata"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
 
 export const timeOffRequests = pgTable("time_off_requests", {
   id: uuid("id").primaryKey().defaultRandom(),

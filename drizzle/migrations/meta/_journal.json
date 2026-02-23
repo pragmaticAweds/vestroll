@@ -15,6 +15,13 @@
       "when": 1771842610081,
       "tag": "0001_gifted_shotgun",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1771845400757,
+      "tag": "0002_yielding_kronos",
+      "breakpoints": true
     }
   ]
 }
