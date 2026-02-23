@@ -4,6 +4,7 @@ import { OTP_EXPIRATION_MINUTES } from "./email-verification.service";
 import { UserService } from "./user.service";
 import { OTPService } from "./otp.service";
 import {
+  BadRequestError,
   ConflictError,
   UnauthorizedError,
   ForbiddenError,
@@ -182,5 +183,43 @@ export class AuthService {
         lastName: user.lastName,
       },
     };
+  }
+
+  static async changePassword(
+    userId: string,
+    currentPasswordHash: string | null,
+    currentPassword: string,
+    newPassword: string,
+  ) {
+    if (!currentPasswordHash) {
+      throw new BadRequestError(
+        "No password set for this account. Password change is not available for OAuth-only accounts.",
+      );
+    }
+
+    const isCurrentValid = await PasswordVerificationService.verify(
+      currentPassword,
+      currentPasswordHash,
+    );
+    if (!isCurrentValid) {
+      throw new UnauthorizedError("Current password is incorrect");
+    }
+
+    const isSamePassword = await PasswordVerificationService.verify(
+      newPassword,
+      currentPasswordHash,
+    );
+    if (isSamePassword) {
+      throw new BadRequestError(
+        "New password must be different from current password",
+      );
+    }
+
+    const newPasswordHash = await PasswordVerificationService.hash(newPassword);
+
+    await db
+      .update(users)
+      .set({ passwordHash: newPasswordHash, updatedAt: new Date() })
+      .where(eq(users.id, userId));
   }
 }

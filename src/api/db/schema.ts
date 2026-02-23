@@ -244,6 +244,7 @@ export const employees = pgTable(
 
 export const companyProfiles = pgTable("company_profiles", {
   id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id").references(() => users.id, { onDelete: "cascade" }).notNull(),
   organizationId: uuid("organization_id")
     .references(() => organizations.id, { onDelete: "cascade" })
     .notNull()
