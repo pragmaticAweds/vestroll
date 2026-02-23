@@ -1,3 +1,4 @@
+
 import {
   pgTable,
   uuid,
@@ -34,6 +35,11 @@ export const kybStatusEnum = pgEnum("kyb_status", [
   "pending",
   "verified",
   "rejected",
+]);
+export const timesheetStatusEnum = pgEnum("timesheet_status", [
+  "Pending",
+  "Approved",
+  "Rejected",
 ]);
 export const contractStatusEnum = pgEnum("contract_status", [
   "pending_signature",
@@ -442,6 +448,12 @@ export const expenses = pgTable(
     index("expenses_status_idx").on(table.status),
   ],
 );
+export const milestoneRelations = relations(milestones, (helpers: any) => ({
+  employee: helpers.one(employees, {
+    fields: [milestones.employeeId],
+    references: [employees.id],
+  }),
+}));
 
 export const timeOffRequests = pgTable(
   "time_off_requests",
@@ -469,3 +481,10 @@ export const timeOffRequests = pgTable(
     index("time_off_requests_status_idx").on(table.status),
   ],
 );
+export const employeeRelations = relations(employees, (helpers: any) => ({
+  organization: helpers.one(organizations, {
+    fields: [employees.organizationId],
+    references: [organizations.id],
+  }),
+  milestones: helpers.many(milestones),
+}));
