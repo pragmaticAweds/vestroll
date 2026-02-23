@@ -1,4 +1,3 @@
-
 import {
   pgTable,
   uuid,
@@ -419,6 +418,7 @@ export const timesheets = pgTable(
   },
   (table) => [
     index("timesheets_organization_id_idx").on(table.organizationId),
+    index("timesheets_employee_id_idx").on(table.employeeId),
     index("timesheets_status_idx").on(table.status),
   ],
 );
