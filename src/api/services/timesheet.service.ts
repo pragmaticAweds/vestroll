@@ -1,8 +1,15 @@
 import { db } from "../db";
 import { timesheets, employees, users } from "../db/schema";
 import { eq, and, count, SQL } from "drizzle-orm";
-import { ForbiddenError } from "../utils/errors";
-import { GetTimesheetsQuery } from "../validations/timesheet.schema";
+import {
+  ForbiddenError,
+  NotFoundError,
+  BadRequestError,
+} from "../utils/errors";
+import {
+  GetTimesheetsQuery,
+  UpdateTimesheetStatusInput,
+} from "../validations/timesheet.schema";
 
 export class TimesheetService {
   static async getTimesheets(userId: string, query: GetTimesheetsQuery) {
@@ -21,7 +28,12 @@ export class TimesheetService {
     ];
 
     if (query.status) {
-      conditions.push(eq(timesheets.status, query.status));
+      conditions.push(
+        eq(
+          timesheets.status,
+          query.status.toLowerCase() as "pending" | "approved" | "rejected",
+        ),
+      );
     }
 
     const whereClause = and(...conditions);
@@ -33,38 +45,34 @@ export class TimesheetService {
 
     const offset = (query.page - 1) * query.limit;
 
-    const results = await db
+    const rows = await db
       .select({
         id: timesheets.id,
-        employeeId: timesheets.employeeId,
-        firstName: employees.firstName,
-        lastName: employees.lastName,
-        avatarUrl: employees.avatarUrl,
-        role: employees.role,
-        totalHours: timesheets.totalHours,
+        totalHours: timesheets.totalWorked,
         rate: timesheets.rate,
         totalAmount: timesheets.totalAmount,
         status: timesheets.status,
-        submittedAt: timesheets.submittedAt,
+        employeeFirstName: employees.firstName,
+        employeeLastName: employees.lastName,
       })
       .from(timesheets)
       .innerJoin(employees, eq(timesheets.employeeId, employees.id))
       .where(whereClause)
+      .orderBy(timesheets.createdAt)
       .limit(query.limit)
-      .offset(offset)
-      .orderBy(timesheets.submittedAt);
+      .offset(offset);
 
-    const formattedResults = results.map((item) => ({
-      id: item.id,
-      employeeName: `${item.firstName} ${item.lastName}`,
-      totalHours: item.totalHours,
-      rate: item.rate,
-      totalAmount: item.totalAmount,
-      status: item.status,
+    const data = rows.map((row) => ({
+      id: row.id,
+      employeeName: `${row.employeeFirstName} ${row.employeeLastName}`,
+      totalHours: row.totalHours,
+      rate: row.rate,
+      totalAmount: row.totalAmount,
+      status: row.status,
     }));
 
     return {
-      data: formattedResults,
+      data,
       pagination: {
         page: query.page,
         limit: query.limit,
@@ -72,5 +80,67 @@ export class TimesheetService {
         totalPages: Math.ceil(totalCount / query.limit),
       },
     };
+  }
+
+  static async updateStatus(
+    userId: string,
+    timesheetId: string,
+    input: UpdateTimesheetStatusInput,
+  ) {
+    const [user] = await db
+      .select({ organizationId: users.organizationId })
+      .from(users)
+      .where(eq(users.id, userId))
+      .limit(1);
+
+    if (!user?.organizationId) {
+      throw new ForbiddenError("User is not associated with any organization");
+    }
+
+    const [timesheet] = await db
+      .select()
+      .from(timesheets)
+      .where(
+        and(
+          eq(timesheets.id, timesheetId),
+          eq(timesheets.organizationId, user.organizationId),
+        ),
+      )
+      .limit(1);
+
+    if (!timesheet) {
+      throw new NotFoundError("Timesheet not found");
+    }
+
+    if (timesheet.status !== "pending") {
+      throw new BadRequestError(
+        `Timesheet has already been ${timesheet.status}`,
+      );
+    }
+
+    const now = new Date();
+    const totalApprovedAmount =
+      input.status === "approved"
+        ? timesheet.rate * timesheet.totalWorked
+        : null;
+
+    const [updated] = await db
+      .update(timesheets)
+      .set({
+        status: input.status,
+        totalApprovedAmount,
+        lockedForPayroll: input.status === "approved",
+        approvedBy: userId,
+        approvedAt: now,
+        updatedAt: now,
+      })
+      .where(eq(timesheets.id, timesheetId))
+      .returning({
+        id: timesheets.id,
+        status: timesheets.status,
+        totalApprovedAmount: timesheets.totalApprovedAmount,
+      });
+
+    return updated;
   }
 }

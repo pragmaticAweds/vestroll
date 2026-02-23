@@ -17,3 +17,14 @@ export const GetTimesheetsQuerySchema = z.object({
 });
 
 export type GetTimesheetsQuery = z.infer<typeof GetTimesheetsQuerySchema>;
+
+export const UpdateTimesheetStatusSchema = z.object({
+  status: z.enum(["approved", "rejected"], {
+    required_error: "Status is required",
+    invalid_type_error: "Status must be 'approved' or 'rejected'",
+  }),
+});
+
+export type UpdateTimesheetStatusInput = z.infer<
+  typeof UpdateTimesheetStatusSchema
+>;
