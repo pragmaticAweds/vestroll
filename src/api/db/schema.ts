@@ -288,6 +288,7 @@ export const expenses = pgTable("expenses", {
   category: varchar("category", { length: 255 }).notNull(),
   amount: integer("amount").notNull(),
   description: text("description"),
+  attachmentUrl: varchar("attachment_url", { length: 512 }),
   expenseDate: timestamp("expense_date").notNull(),
   status: approvalStatusEnum("status").default("pending").notNull(),
   submittedAt: timestamp("submitted_at"),

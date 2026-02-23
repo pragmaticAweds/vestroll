@@ -1,4 +1,4 @@
-import { db, users, organizations } from "../db";
+import { db, users, organizations, expenses } from "../db";
 import { eq } from "drizzle-orm";
 
 export class TeamService {
@@ -45,5 +45,24 @@ export class TeamService {
             });
 
         return newUser;
+    }
+
+    /**
+     * Retrieve all business-related expenses submitted for reimbursement.
+     */
+    static async getExpenses(organizationId: string) {
+        const result = await db
+            .select({
+                id: expenses.id,
+                expenseName: expenses.name,
+                category: expenses.category,
+                amount: expenses.amount,
+                status: expenses.status,
+                attachmentUrl: expenses.attachmentUrl,
+            })
+            .from(expenses)
+            .where(eq(expenses.organizationId, organizationId));
+
+        return result;
     }
 }
