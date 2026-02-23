@@ -5,6 +5,33 @@ CREATE TYPE "public"."invoice_status" AS ENUM('pending', 'approved', 'unpaid', '
 CREATE TYPE "public"."milestone_status" AS ENUM('pending', 'in_progress', 'completed', 'approved', 'rejected');--> statement-breakpoint
 CREATE TYPE "public"."payment_type" AS ENUM('crypto', 'fiat');--> statement-breakpoint
 CREATE TYPE "public"."time_off_type" AS ENUM('paid', 'unpaid');--> statement-breakpoint
+CREATE TABLE "company_profiles" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"organization_id" uuid NOT NULL,
+	"logo_url" varchar(512),
+	"brand_name" varchar(255) NOT NULL,
+	"registered_name" varchar(255) NOT NULL,
+	"registration_number" varchar(255) NOT NULL,
+	"country" varchar(255) NOT NULL,
+	"size" varchar(100),
+	"vat_number" varchar(255),
+	"website" varchar(512),
+	"address" varchar(500) NOT NULL,
+	"alt_address" varchar(500),
+	"city" varchar(255) NOT NULL,
+	"region" varchar(255),
+	"postal_code" varchar(50),
+	"billing_address" varchar(500),
+	"billing_alt_address" varchar(500),
+	"billing_city" varchar(255),
+	"billing_region" varchar(255),
+	"billing_country" varchar(255),
+	"billing_postal_code" varchar(50),
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "company_profiles_organization_id_unique" UNIQUE("organization_id")
+);
+--> statement-breakpoint
 CREATE TABLE "contracts" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"organization_id" uuid NOT NULL,
@@ -66,6 +93,17 @@ CREATE TABLE "milestones" (
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
+CREATE TABLE "organization_wallets" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"organization_id" uuid NOT NULL,
+	"wallet_address" varchar(255),
+	"funded" boolean DEFAULT false NOT NULL,
+	"funded_at" timestamp,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "organization_wallets_organization_id_unique" UNIQUE("organization_id")
+);
+--> statement-breakpoint
 CREATE TABLE "time_off_requests" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"organization_id" uuid NOT NULL,
@@ -95,6 +133,19 @@ CREATE TABLE "timesheets" (
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
+ALTER TABLE "organizations" ADD COLUMN "industry" varchar(255);--> statement-breakpoint
+ALTER TABLE "organizations" ADD COLUMN "registration_number" varchar(255);--> statement-breakpoint
+ALTER TABLE "organizations" ADD COLUMN "registered_street" varchar(255);--> statement-breakpoint
+ALTER TABLE "organizations" ADD COLUMN "registered_city" varchar(255);--> statement-breakpoint
+ALTER TABLE "organizations" ADD COLUMN "registered_state" varchar(255);--> statement-breakpoint
+ALTER TABLE "organizations" ADD COLUMN "registered_postal_code" varchar(255);--> statement-breakpoint
+ALTER TABLE "organizations" ADD COLUMN "registered_country" varchar(255);--> statement-breakpoint
+ALTER TABLE "organizations" ADD COLUMN "billing_street" varchar(255);--> statement-breakpoint
+ALTER TABLE "organizations" ADD COLUMN "billing_city" varchar(255);--> statement-breakpoint
+ALTER TABLE "organizations" ADD COLUMN "billing_state" varchar(255);--> statement-breakpoint
+ALTER TABLE "organizations" ADD COLUMN "billing_postal_code" varchar(255);--> statement-breakpoint
+ALTER TABLE "organizations" ADD COLUMN "billing_country" varchar(255);--> statement-breakpoint
+ALTER TABLE "company_profiles" ADD CONSTRAINT "company_profiles_organization_id_organizations_id_fk" FOREIGN KEY ("organization_id") REFERENCES "public"."organizations"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "contracts" ADD CONSTRAINT "contracts_organization_id_organizations_id_fk" FOREIGN KEY ("organization_id") REFERENCES "public"."organizations"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "contracts" ADD CONSTRAINT "contracts_employee_id_employees_id_fk" FOREIGN KEY ("employee_id") REFERENCES "public"."employees"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "expenses" ADD CONSTRAINT "expenses_organization_id_organizations_id_fk" FOREIGN KEY ("organization_id") REFERENCES "public"."organizations"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
@@ -105,6 +156,7 @@ ALTER TABLE "invoices" ADD CONSTRAINT "invoices_contract_id_contracts_id_fk" FOR
 ALTER TABLE "milestones" ADD CONSTRAINT "milestones_organization_id_organizations_id_fk" FOREIGN KEY ("organization_id") REFERENCES "public"."organizations"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "milestones" ADD CONSTRAINT "milestones_employee_id_employees_id_fk" FOREIGN KEY ("employee_id") REFERENCES "public"."employees"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "milestones" ADD CONSTRAINT "milestones_contract_id_contracts_id_fk" FOREIGN KEY ("contract_id") REFERENCES "public"."contracts"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "organization_wallets" ADD CONSTRAINT "organization_wallets_organization_id_organizations_id_fk" FOREIGN KEY ("organization_id") REFERENCES "public"."organizations"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "time_off_requests" ADD CONSTRAINT "time_off_requests_organization_id_organizations_id_fk" FOREIGN KEY ("organization_id") REFERENCES "public"."organizations"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "time_off_requests" ADD CONSTRAINT "time_off_requests_employee_id_employees_id_fk" FOREIGN KEY ("employee_id") REFERENCES "public"."employees"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "timesheets" ADD CONSTRAINT "timesheets_organization_id_organizations_id_fk" FOREIGN KEY ("organization_id") REFERENCES "public"."organizations"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint

@@ -1,5 +1,5 @@
 {
-  "id": "ff7a4574-a825-4831-b510-5a472a4333b4",
+  "id": "b867426e-fc36-4923-ba38-0d5d467c6143",
   "prevId": "75cd6dbd-62ea-4cdc-be1a-60a51a0e0a32",
   "version": "7",
   "dialect": "postgresql",
@@ -66,6 +66,182 @@
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.company_profiles": {
+      "name": "company_profiles",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "organization_id": {
+          "name": "organization_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "logo_url": {
+          "name": "logo_url",
+          "type": "varchar(512)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "brand_name": {
+          "name": "brand_name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "registered_name": {
+          "name": "registered_name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "registration_number": {
+          "name": "registration_number",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "country": {
+          "name": "country",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "size": {
+          "name": "size",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "vat_number": {
+          "name": "vat_number",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "website": {
+          "name": "website",
+          "type": "varchar(512)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "address": {
+          "name": "address",
+          "type": "varchar(500)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "alt_address": {
+          "name": "alt_address",
+          "type": "varchar(500)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "city": {
+          "name": "city",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "region": {
+          "name": "region",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "postal_code": {
+          "name": "postal_code",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "billing_address": {
+          "name": "billing_address",
+          "type": "varchar(500)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "billing_alt_address": {
+          "name": "billing_alt_address",
+          "type": "varchar(500)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "billing_city": {
+          "name": "billing_city",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "billing_region": {
+          "name": "billing_region",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "billing_country": {
+          "name": "billing_country",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "billing_postal_code": {
+          "name": "billing_postal_code",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "company_profiles_organization_id_organizations_id_fk": {
+          "name": "company_profiles_organization_id_organizations_id_fk",
+          "tableFrom": "company_profiles",
+          "tableTo": "organizations",
+          "columnsFrom": [
+            "organization_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "company_profiles_organization_id_unique": {
+          "name": "company_profiles_organization_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "organization_id"
+          ]
+        }
+      },
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -1104,6 +1280,87 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
+    "public.organization_wallets": {
+      "name": "organization_wallets",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "organization_id": {
+          "name": "organization_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "wallet_address": {
+          "name": "wallet_address",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "funded": {
+          "name": "funded",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "funded_at": {
+          "name": "funded_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "organization_wallets_organization_id_organizations_id_fk": {
+          "name": "organization_wallets_organization_id_organizations_id_fk",
+          "tableFrom": "organization_wallets",
+          "tableTo": "organizations",
+          "columnsFrom": [
+            "organization_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "organization_wallets_organization_id_unique": {
+          "name": "organization_wallets_organization_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "organization_id"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.organizations": {
       "name": "organizations",
       "schema": "",
@@ -1120,6 +1377,78 @@
           "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true
+        },
+        "industry": {
+          "name": "industry",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "registration_number": {
+          "name": "registration_number",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "registered_street": {
+          "name": "registered_street",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "registered_city": {
+          "name": "registered_city",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "registered_state": {
+          "name": "registered_state",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "registered_postal_code": {
+          "name": "registered_postal_code",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "registered_country": {
+          "name": "registered_country",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "billing_street": {
+          "name": "billing_street",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "billing_city": {
+          "name": "billing_city",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "billing_state": {
+          "name": "billing_state",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "billing_postal_code": {
+          "name": "billing_postal_code",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "billing_country": {
+          "name": "billing_country",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
         },
         "created_at": {
           "name": "created_at",
