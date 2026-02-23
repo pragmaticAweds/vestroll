@@ -165,3 +165,18 @@ export const kybVerifications = pgTable("kyb_verifications", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
+export const milestoneStatusEnum = pgEnum("milestone_status", [
+  "In Progress",
+  "Approved", 
+  "Rejected",
+]);
+
+export const milestones = pgTable("milestones", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  teamId: uuid("team_id").notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  status: milestoneStatusEnum("status").default("In Progress").notNull(),
+  reason: text("reason"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
