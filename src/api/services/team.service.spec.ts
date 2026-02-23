@@ -15,6 +15,15 @@ vi.mock("../db", () => ({
     },
     organizations: {
         id: "id",
+    },
+    expenses: {
+        id: "id",
+        name: "name",
+        category: "category",
+        amount: "amount",
+        status: "status",
+        attachmentUrl: "attachmentUrl",
+        organizationId: "organizationId"
     }
 }));
 
@@ -59,5 +68,27 @@ describe("TeamService", () => {
         expect(user.id).toBe("new-id");
         expect(user.status).toBe("pending_verification");
         expect(user.invitedAt).toBe(date);
+    });
+
+    it("should fetch expenses for a given organizationId", async () => {
+        const mockExpenses = [
+            {
+                id: "exp-1",
+                expenseName: "Flight",
+                category: "Travel",
+                amount: 500,
+                status: "pending",
+                attachmentUrl: "http://example.com/receipt.pdf"
+            }
+        ];
+
+        const selectMock = {
+            from: vi.fn().mockReturnThis(),
+            where: vi.fn().mockResolvedValue(mockExpenses),
+        };
+        (db.select as any).mockReturnValue(selectMock);
+
+        const expenses = await TeamService.getExpenses("org-123");
+        expect(expenses).toEqual(mockExpenses);
     });
 });
