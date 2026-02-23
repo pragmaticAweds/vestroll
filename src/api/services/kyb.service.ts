@@ -1,9 +1,18 @@
+import crypto from "crypto";
 import { db, kybVerifications, kybStatusEnum } from "../db";
 import { eq } from "drizzle-orm";
+import { ConflictError } from "../utils/errors";
 
 export type KybStatus = (typeof kybStatusEnum.enumValues)[number];
 
+const CLOUDINARY_CLOUD_NAME = process.env.CLOUDINARY_CLOUD_NAME;
+const CLOUDINARY_API_KEY = process.env.CLOUDINARY_API_KEY;
+const CLOUDINARY_API_SECRET = process.env.CLOUDINARY_API_SECRET;
+
 export class KybService {
+  /**
+   * Returns the current KYB verification status for a user.
+   */
   static async getStatus(userId: string) {
     const [verification] = await db
       .select()
@@ -25,16 +34,7 @@ export class KybService {
       submittedAt: verification.submittedAt,
     };
   }
-import crypto from "crypto";
-import { db, kybVerifications } from "../db";
-import { eq, and, inArray } from "drizzle-orm";
-import { ConflictError } from "../utils/errors";
 
-const CLOUDINARY_CLOUD_NAME = process.env.CLOUDINARY_CLOUD_NAME;
-const CLOUDINARY_API_KEY = process.env.CLOUDINARY_API_KEY;
-const CLOUDINARY_API_SECRET = process.env.CLOUDINARY_API_SECRET;
-
-export class KybService {
   /**
    * Uploads a file to Cloudinary using the REST API (no SDK).
    * Returns the public_id and secure_url for storage in the database.
@@ -147,7 +147,7 @@ export class KybService {
         .limit(1);
 
       if (existing) {
-        if (existing.status === "approved") {
+        if (existing.status === "verified") {
           throw new ConflictError("KYB verification already approved");
         }
         if (existing.status === "pending") {

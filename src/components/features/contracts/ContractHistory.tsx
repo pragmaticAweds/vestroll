@@ -30,13 +30,13 @@ const ContractHistoryCard = (contract: Contract) => {
       <div className="min-w-[250px] bg-white rounded-xl space-y-2 p-4 dark:bg-gray-900">
         <div className="flex justify-between">
           <Image src={"/contract-icon.png"} alt="icon" width={40} height={40} />
-          <div className="p-2 flex gap-2 bg-gray-100 rounded-full dark:bg-gray-800 dark:text-gray-300">
+          <div className="flex gap-2 p-2 bg-gray-100 rounded-full dark:bg-gray-800 dark:text-gray-300">
             <CircleDollarSign className="text-green-500" />
             {contract.amount.toFixed(2)}{" "}
             {contract.paymentType === 1 ? "USD" : "USDT"}
           </div>
         </div>
-        <h4 className="font-semibold text-sm md:text-base dark:text-white">
+        <h4 className="text-sm font-semibold md:text-base dark:text-white">
           {contract.title}
         </h4>
         {/* period */}
@@ -115,7 +115,7 @@ function ContractHistory() {
           History
         </p>
         <div className="flex items-center w-full gap-1 md:max-w-85">
-          <div className="flex justify-between items-center w-full px-4 py-2 bg-white border rounded-lg border-border-primary h-9 dark:bg-gray-900 dark:border-gray-800">
+          <div className="flex items-center justify-between w-full px-4 py-2 bg-white border rounded-lg border-border-primary h-9 dark:bg-gray-900 dark:border-gray-800">
             <input
               type="search"
               className="w-full text-xs text-gray-400 outline-none dark:bg-gray-900 dark:text-white"
@@ -139,10 +139,10 @@ function ContractHistory() {
           )}
         </div>
       </div>
-      <div className="mb-4 flex justify-end">
+      <div className="flex justify-end mb-4">
         {/* shows the current filters set */}
         {filters.contractType !== filters.status && (
-          <div className="flex gap-3 items-center">
+          <div className="flex items-center gap-3">
             {filters.contractType !== "All" && (
               <p className="p-2 bg-[#F3EBF9] flex items-center gap-2 rounded-xl dark:bg-gray-800">
                 <span className="font-medium text-[#5E2A8C] dark:text-purple-400">
@@ -200,7 +200,7 @@ function ContractHistory() {
 
       {/* contract list */}
       {filteredMockContracts.length > 0 ? (
-        <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <section className="grid w-full grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
           {filteredMockContracts.map((item, index) => (
             <ContractHistoryCard {...item} key={index} />
           ))}
