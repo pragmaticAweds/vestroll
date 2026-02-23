@@ -115,15 +115,6 @@ export const loginAttempts = pgTable("login_attempts", {
 
 export const kybVerifications = pgTable("kyb_verifications", {
   id: uuid("id").primaryKey().defaultRandom(),
-  // TODO: Migrate to organization_id when organizations table is introduced
-  userId: uuid("user_id").references(() => users.id, { onDelete: "cascade" }).notNull().unique(),
-  status: kybStatusEnum("status").default("pending").notNull(),
-  rejectionReason: text("rejection_reason"),
-  submittedAt: timestamp("submitted_at"),
-export const kybStatusEnum = pgEnum("kyb_status", ["pending", "approved", "rejected"]);
-
-export const kybVerifications = pgTable("kyb_verifications", {
-  id: uuid("id").primaryKey().defaultRandom(),
   userId: uuid("user_id").references(() => users.id, { onDelete: "cascade" }).notNull(),
   registrationType: varchar("registration_type", { length: 255 }).notNull(),
   registrationNo: varchar("registration_no", { length: 255 }).notNull(),
