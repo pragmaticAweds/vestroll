@@ -179,6 +179,23 @@ export const BillingEmailIcon = () => (
     />
   </svg>
 );
+export const ChevronRightIcon = () => (<svg
+  width={19}
+  height={19}
+  viewBox="0 0 19 19"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <path
+    d="M6.78906 15.1779L11.7567 10.2103C12.3433 9.62366 12.3433 8.66366 11.7567 8.07699L6.78906 3.10938"
+    stroke="#5E2A8C"
+    strokeWidth="1.71429"
+    strokeMiterlimit={10}
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  />
+</svg>
+)
 
 export const EditIcon = () => (
   <svg
