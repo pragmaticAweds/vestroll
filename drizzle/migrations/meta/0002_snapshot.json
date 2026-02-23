@@ -12,7 +12,7 @@
           "name": "id",
           "type": "uuid",
           "primaryKey": true,
-          "notNull": true,
+          "notNull": true,b
           "default": "gen_random_uuid()"
         },
         "user_id": {

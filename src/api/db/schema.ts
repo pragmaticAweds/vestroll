@@ -21,30 +21,14 @@ export const twoFactorMethodEnum = pgEnum("two_factor_method", [
   "backup_code",
 ]);
 export const oauthProviderEnum = pgEnum("oauth_provider", ["google", "apple"]);
-export const kybStatusEnum = pgEnum("kyb_status", ["not_started", "pending", "verified", "rejected"]);
-export const leaveStatusEnum = pgEnum("leave_status", ["Pending", "Approved", "Rejected", "Cancelled",]);
-export const leaveTypeEnum = pgEnum("leave_type", ["vacation", "sick", "personal", "other",]);
-export const contractStatusEnum = pgEnum("contract_status", ["pending_signature", "in_review", "rejected", "active", "completed"]);
-export const contractTypeEnum = pgEnum("contract_type", ["fixed_rate", "pay_as_you_go", "milestone"]);
-export const employeeStatusEnum = pgEnum("employee_status", [
-  "Active",
-  "Inactive",
-]);
-export const employeeTypeEnum = pgEnum("employee_type", [
-  "Freelancer",
-  "Contractor",
-]);
 export const kybStatusEnum = pgEnum("kyb_status", [
   "not_started",
   "pending",
   "verified",
   "rejected",
 ]);
-export const timesheetStatusEnum = pgEnum("timesheet_status", [
-  "Pending",
-  "Approved",
-  "Rejected",
-]);
+export const leaveStatusEnum = pgEnum("leave_status", ["Pending", "Approved", "Rejected", "Cancelled",]);
+export const leaveTypeEnum = pgEnum("leave_type", ["vacation", "sick", "personal", "other",]);
 export const contractStatusEnum = pgEnum("contract_status", [
   "pending_signature",
   "in_review",
@@ -56,6 +40,19 @@ export const contractTypeEnum = pgEnum("contract_type", [
   "fixed_rate",
   "pay_as_you_go",
   "milestone",
+]);
+export const employeeStatusEnum = pgEnum("employee_status", [
+  "Active",
+  "Inactive",
+]);
+export const employeeTypeEnum = pgEnum("employee_type", [
+  "Freelancer",
+  "Contractor",
+]);
+export const timesheetStatusEnum = pgEnum("timesheet_status", [
+  "Pending",
+  "Approved",
+  "Rejected",
 ]);
 export const paymentTypeEnum = pgEnum("payment_type", ["crypto", "fiat"]);
 export const invoiceStatusEnum = pgEnum("invoice_status", [
@@ -244,6 +241,7 @@ export const employees = pgTable(
 
 export const companyProfiles = pgTable("company_profiles", {
   id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id").references(() => users.id, { onDelete: "cascade" }).notNull(),
   organizationId: uuid("organization_id")
     .references(() => organizations.id, { onDelete: "cascade" })
     .notNull()
@@ -328,6 +326,7 @@ export const leaveRequests = pgTable("leave_requests", {
   reviewedByUserId: uuid("reviewed_by_user_id").references(() => users.id, { onDelete: "set null", }),
   reviewedAt: timestamp("reviewed_at"),
   rejectionReason: text("rejection_reason"),
+  submittedAt: timestamp("submitted_at").defaultNow().notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 },
@@ -395,18 +394,29 @@ export const milestones = pgTable(
   "milestones",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    milestoneName: varchar("milestone_name", { length: 255 }).notNull(),
-    amount: integer("amount").notNull(),
-    dueDate: timestamp("due_date").notNull(),
-    status: milestoneStatusEnum("status").default("pending").notNull(),
-    employeeId: uuid("employee_id").references(() => employees.id, {
-      onDelete: "cascade",
+    organizationId: uuid("organization_id")
+      .references(() => organizations.id, { onDelete: "cascade" })
+      .notNull(),
+    employeeId: uuid("employee_id")
+      .references(() => employees.id, { onDelete: "cascade" })
+      .notNull(),
+    contractId: uuid("contract_id").references(() => contracts.id, {
+      onDelete: "set null",
     }),
-    submittedAt: timestamp("submitted_at").defaultNow().notNull(),
+    milestoneName: varchar("milestone_name", { length: 255 }).notNull(),
+    milestoneCompleted: integer("milestone_completed").default(0).notNull(),
+    totalMilestone: integer("total_milestone").notNull(),
+    amount: integer("amount").notNull(),
+    status: milestoneStatusEnum("status").default("pending").notNull(),
+    dueDate: timestamp("due_date"),
+    submittedAt: timestamp("submitted_at"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
   },
-  (table) => [index("milestones_employee_id_idx").on(table.employeeId)],
+  (table) => [
+    index("milestones_organization_id_idx").on(table.organizationId),
+    index("milestones_status_idx").on(table.status),
+  ],
 );
 
 export const timesheets = pgTable(
@@ -422,7 +432,13 @@ export const timesheets = pgTable(
     rate: integer("rate").notNull(),
     totalWorked: integer("total_worked").notNull(),
     totalAmount: integer("total_amount").notNull(),
+    totalApprovedAmount: integer("total_approved_amount"),
     status: approvalStatusEnum("status").default("pending").notNull(),
+    lockedForPayroll: boolean("locked_for_payroll").default(false).notNull(),
+    approvedBy: uuid("approved_by").references(() => users.id, {
+      onDelete: "set null",
+    }),
+    approvedAt: timestamp("approved_at"),
     submittedAt: timestamp("submitted_at"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
@@ -434,6 +450,31 @@ export const timesheets = pgTable(
   ],
 );
 
+export const expenses = pgTable(
+  "expenses",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    organizationId: uuid("organization_id")
+      .references(() => organizations.id, { onDelete: "cascade" })
+      .notNull(),
+    employeeId: uuid("employee_id")
+      .references(() => employees.id, { onDelete: "cascade" })
+      .notNull(),
+    name: varchar("name", { length: 255 }).notNull(),
+    category: varchar("category", { length: 255 }).notNull(),
+    amount: integer("amount").notNull(),
+    description: text("description"),
+    expenseDate: timestamp("expense_date").notNull(),
+    status: approvalStatusEnum("status").default("pending").notNull(),
+    submittedAt: timestamp("submitted_at"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  },
+  (table) => [
+    index("expenses_organization_id_idx").on(table.organizationId),
+    index("expenses_status_idx").on(table.status),
+  ],
+);
 export const milestoneRelations = relations(milestones, (helpers: any) => ({
   employee: helpers.one(employees, {
     fields: [milestones.employeeId],
@@ -441,10 +482,48 @@ export const milestoneRelations = relations(milestones, (helpers: any) => ({
   }),
 }));
 
+export const timeOffRequests = pgTable(
+  "time_off_requests",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    organizationId: uuid("organization_id")
+      .references(() => organizations.id, { onDelete: "cascade" })
+      .notNull(),
+    employeeId: uuid("employee_id")
+      .references(() => employees.id, { onDelete: "cascade" })
+      .notNull(),
+    type: timeOffTypeEnum("type").notNull(),
+    startDate: timestamp("start_date").notNull(),
+    endDate: timestamp("end_date").notNull(),
+    reason: varchar("reason", { length: 255 }).notNull(),
+    description: text("description"),
+    totalDuration: integer("total_duration").notNull(),
+    status: approvalStatusEnum("status").default("pending").notNull(),
+    submittedAt: timestamp("submitted_at"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  },
+  (table) => [
+    index("time_off_requests_organization_id_idx").on(table.organizationId),
+    index("time_off_requests_status_idx").on(table.status),
+  ],
+);
 export const employeeRelations = relations(employees, (helpers: any) => ({
   organization: helpers.one(organizations, {
     fields: [employees.organizationId],
     references: [organizations.id],
   }),
   milestones: helpers.many(milestones),
+  leaveRequests: helpers.many(leaveRequests),
+}));
+
+export const leaveRequestRelations = relations(leaveRequests, (helpers: any) => ({
+  employee: helpers.one(employees, {
+    fields: [leaveRequests.employeeId],
+    references: [employees.id],
+  }),
+  organization: helpers.one(organizations, {
+    fields: [leaveRequests.organizationId],
+    references: [organizations.id],
+  }),
 }));
