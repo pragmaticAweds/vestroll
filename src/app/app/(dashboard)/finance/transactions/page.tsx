@@ -1,13 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { MOCK_ASSETS, generateMockTransactions } from "@/lib/mock-data";
-import { BalanceSection } from "@/components/features/finance/balance-section";
-import { AssetsGrid } from "@/components/features/finance/assets-grid";
+import { Button } from "@/components/ui/button";
+import { ExportIcon, UsdtIcon } from "../../../../../../public/svg";
 import Table from "@/components/shared/table/Table";
 import { TableColumn } from "@/components/shared/table/TableHeader";
 import { Transaction } from "@/types/finance.types";
-import { UsdtIcon } from "@/../public/svg";
+import { generateMockTransactions } from "@/lib/mock-data";
 
 const mockTransactions = generateMockTransactions(80);
 
@@ -20,7 +19,7 @@ const transactionColumns: TableColumn[] = [
   { key: "timestamp", header: "Timestamp", align: "right" },
 ];
 
-export default function FinancePage() {
+export default function TransactionsPage() {
   const [search, setSearch] = useState("");
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
 
@@ -134,64 +133,65 @@ export default function FinancePage() {
   const showModal = () => console.log("Show filter modal");
 
   return (
-    <div className="">
-      <div className="">
-        {/* Header */}
-        <div>
-          <header className="flex sm:flex-row items-center justify-between px-6 sm:pt-6 pb-1 space-y-1 sm:space-y-2 bg-white sm:border-b sm:border-[#DCE0E5] sm:pb-5 dark:bg-gray-900 dark:border-gray-800">
+    <div>
+      <div>
+        <header className="flex sm:flex-row items-center justify-between px-6 sm:pt-6 pb-1 space-y-1 sm:space-y-2 bg-white sm:border-b sm:border-[#DCE0E5] sm:pb-5 dark:bg-gray-900 dark:border-gray-800">
+          <div>
+            <p className="text-xs text-[#7F8C9F] font-medium leading-[120%] tracking-[0%] dark:text-gray-400">
+              Overview
+            </p>
+            <h1 className="font-bold text-2xl sm:font-semibold sm:text-[1.75rem] text-text-header dark:text-gray-100">
+              Transactions
+            </h1>
+          </div>
+          <Button className="inline-flex items-center justify-center px-4 py-2 h-12 ml-auto md:py-2 bg-[#5E2A8C] text-white font-medium rounded-full hover:bg-[#7C3AED] focus:outline-none focus:ring-2 focus:ring-[#5E2A8C] focus:ring-offset-2 transition-colors duration-200 gap-2 whitespace-nowrap dark:bg-purple-600 dark:hover:bg-purple-700">
+            <ExportIcon />
+            Export
             <div>
-              <p className="text-xs text-[#7F8C9F] font-medium leading-[120%] tracking-[0%] dark:text-gray-400">
-                Overview
-              </p>
-              <h1 className="font-bold text-2xl sm:font-semibold sm:text-[1.75rem] text-text-header dark:text-gray-100">
-                Finance
-              </h1>
+              <svg
+                width={16}
+                height={16}
+                viewBox="0 0 16 16"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M7.16125 12.0843L5.84792 10.771L3.70792 8.63096C3.26125 8.17763 3.58125 7.4043 4.22125 7.4043H8.37459L12.1146 7.4043C12.7546 7.4043 13.0746 8.17763 12.6213 8.63096L9.16792 12.0843C8.62125 12.6376 7.71459 12.6376 7.16125 12.0843Z"
+                  fill="white"
+                />
+              </svg>
             </div>
-          </header>
-        </div>
+          </Button>
+        </header>
+      </div>
 
-        <div className="p-4">
-          {/* Balance Section */}
-          <div className="flex flex-col md:flex-row w-full gap-4 md:gap-6 mb-2">
-            <BalanceSection balance="$5,050.00" change="-0.0051% ($0.99)" />
-            <BalanceSection balance="$5,050.00" change="-0.0051% ($0.99)" />
-          </div>
-
-          {/* Assets Grid */}
-          <AssetsGrid assets={MOCK_ASSETS} />
-
-          {/* Transactions Table */}
-          <div className="mt-6">
-            <Table
-              data={filteredTransactions}
-              columns={transactionColumns}
-              search={search}
-              setSearch={setSearch}
-              showModal={showModal}
-              selectedTab="Transactions"
-              searchPlaceholder="Search transactions..."
-              showSearch={false}
-              seeAllHref="/app/finance/transactions"
-              selectedItems={selectedItems}
-              onSelectItem={handleSelectItem}
-              onSelectAll={handleSelectAll}
-              renderCell={renderTransactionCell}
-              renderMobileCell={renderMobileCell}
-              showPagination={true}
-              itemsPerPage={10}
-              showResultsPerPage={true}
-              emptyTitle={
-                search ? "No transactions found" : "No transactions yet"
-              }
-              emptyDescription={
-                search
-                  ? `No transactions match "${search}". Try adjusting your search.`
-                  : "Your transactions will appear here"
-              }
-              getItemId={(item) => item.id}
-            />
-          </div>
-        </div>
+      <div className="p-4">
+        <Table
+          data={filteredTransactions}
+          columns={transactionColumns}
+          search={search}
+          setSearch={setSearch}
+          showModal={showModal}
+          selectedTab="History"
+          searchPlaceholder="Search by description..."
+          selectedItems={selectedItems}
+          onSelectItem={handleSelectItem}
+          onSelectAll={handleSelectAll}
+          renderCell={renderTransactionCell}
+          renderMobileCell={renderMobileCell}
+          showPagination={true}
+          itemsPerPage={10}
+          showResultsPerPage={true}
+          emptyTitle={
+            search ? "No transactions found" : "No transactions yet"
+          }
+          emptyDescription={
+            search
+              ? `No transactions match "${search}". Try adjusting your search.`
+              : "Your transactions will be displayed here"
+          }
+          getItemId={(item) => item.id}
+        />
       </div>
     </div>
   );

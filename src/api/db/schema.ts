@@ -11,6 +11,20 @@ export const kybStatusEnum = pgEnum("kyb_status", ["not_started", "pending", "ve
 export const organizations = pgTable("organizations", {
   id: uuid("id").primaryKey().defaultRandom(),
   name: varchar("name", { length: 255 }).notNull(),
+  industry: varchar("industry", { length: 255 }),
+  registrationNumber: varchar("registration_number", { length: 255 }),
+  // Registered address
+  registeredStreet: varchar("registered_street", { length: 255 }),
+  registeredCity: varchar("registered_city", { length: 255 }),
+  registeredState: varchar("registered_state", { length: 255 }),
+  registeredPostalCode: varchar("registered_postal_code", { length: 255 }),
+  registeredCountry: varchar("registered_country", { length: 255 }),
+  // Billing address
+  billingStreet: varchar("billing_street", { length: 255 }),
+  billingCity: varchar("billing_city", { length: 255 }),
+  billingState: varchar("billing_state", { length: 255 }),
+  billingPostalCode: varchar("billing_postal_code", { length: 255 }),
+  billingCountry: varchar("billing_country", { length: 255 }),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
