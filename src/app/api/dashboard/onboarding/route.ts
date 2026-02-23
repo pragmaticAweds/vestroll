@@ -29,8 +29,23 @@ import { OnboardingService } from "@/api/services/onboarding.service";
  *                   type: boolean
  *                 walletFunded:
  *                   type: boolean
+ *                 completedSteps:
+ *                   type: number
+ *                 totalSteps:
+ *                   type: number
  *                 progressPercentage:
  *                   type: number
+ *                 steps:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       key:
+ *                         type: string
+ *                       label:
+ *                         type: string
+ *                       completed:
+ *                         type: boolean
  *       401:
  *         description: Unauthorized
  *       404:
