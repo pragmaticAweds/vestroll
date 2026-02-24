@@ -12,6 +12,7 @@ export interface Asset {
 
 export interface Transaction {
   id: string;
+  type?: string;
   description: string;
   amount: number | string;
   asset?: string;
