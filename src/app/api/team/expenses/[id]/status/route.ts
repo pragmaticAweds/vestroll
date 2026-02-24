@@ -1,21 +1,21 @@
 import { NextRequest } from "next/server";
-import { z } from "zod";
 import { ApiResponse } from "@/api/utils/api-response";
-import { AppError } from "@/api/utils/errors";
-import { AuthUtils } from "@/api/utils/auth";
-import { ExpenseService } from "@/api/services/expense.service";
-
-const UpdateExpenseStatusSchema = z.object({
-  status: z.enum(["approved", "rejected"]),
-  comment: z.string().optional(),
-});
+import { ExpenseStatusService } from "@/api/services/expense-status.service";
+import { JWTTokenService } from "@/api/services/jwt-token.service";
+import {
+  AppError,
+  BadRequestError,
+  ForbiddenError,
+  UnauthorizedError,
+  ValidationError,
+} from "@/api/utils/errors";
+import { UpdateExpenseStatusSchema } from "@/api/validations/expense-status.schema";
 
 /**
  * @swagger
  * /team/expenses/{id}/status:
  *   patch:
- *     summary: Update expense status
- *     description: Approve or reject an employee expense submission
+ *     summary: Approve or reject an expense submission
  *     tags: [Team]
  *     security:
  *       - bearerAuth: []
@@ -26,7 +26,6 @@ const UpdateExpenseStatusSchema = z.object({
  *         schema:
  *           type: string
  *           format: uuid
- *         description: Expense ID
  *     requestBody:
  *       required: true
  *       content:
@@ -38,47 +37,74 @@ const UpdateExpenseStatusSchema = z.object({
  *             properties:
  *               status:
  *                 type: string
- *                 enum: [approved, rejected]
+ *                 enum: [Approved, Rejected]
  *               comment:
  *                 type: string
- *                 description: Required when status is "rejected"
+ *                 description: Required when status is Rejected
  *     responses:
  *       200:
- *         description: Expense status updated successfully
+ *         description: Expense status updated
  *       400:
- *         description: Invalid request or expense already processed
+ *         description: Invalid request or business rule violation
  *       401:
  *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
  *       404:
  *         description: Expense not found
  */
 export async function PATCH(
-  req: NextRequest,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const { userId } = await AuthUtils.authenticateRequest(req);
-    const { id } = await params;
+    const authHeader = request.headers.get("authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      throw new UnauthorizedError("Missing or invalid authorization header");
+    }
 
-    const body = await req.json();
-    const parsed = UpdateExpenseStatusSchema.safeParse(body);
+    const token = authHeader.slice(7);
+    const payload = await JWTTokenService.verifyToken(token);
 
-    if (!parsed.success) {
-      return ApiResponse.error(
-        "Invalid request body",
-        400,
-        parsed.error.flatten().fieldErrors as Record<string, unknown>,
+    const approverId = payload?.userId as string | undefined;
+    const role = String(payload?.role || "").toLowerCase();
+
+    if (!approverId) {
+      throw new UnauthorizedError("Invalid token payload");
+    }
+
+    if (role !== "admin" && role !== "administrator") {
+      throw new ForbiddenError(
+        "Only administrators can approve or reject expenses",
       );
     }
 
-    const { status, comment } = parsed.data;
+    const { id } = await params;
+    const body = await request.json();
+    const validatedBody = UpdateExpenseStatusSchema.safeParse(body);
 
-    const result = await ExpenseService.updateExpenseStatus(
-      id,
-      status,
-      userId,
-      comment,
-    );
+    if (!validatedBody.success) {
+      throw new ValidationError(
+        "Invalid request body",
+        validatedBody.error.flatten().fieldErrors as Record<string, unknown>,
+      );
+    }
+
+    if (
+      validatedBody.data.status === "Rejected" &&
+      !validatedBody.data.comment?.trim()
+    ) {
+      throw new BadRequestError(
+        "Comment is required when rejecting an expense",
+      );
+    }
+
+    const result = await ExpenseStatusService.updateExpenseStatus({
+      expenseId: id,
+      status: validatedBody.data.status,
+      comment: validatedBody.data.comment,
+      approverId,
+    });
 
     return ApiResponse.success(result, "Expense status updated successfully");
   } catch (error) {
@@ -86,7 +112,7 @@ export async function PATCH(
       return ApiResponse.error(error.message, error.statusCode, error.errors);
     }
 
-    console.error("[Expense Status Update Error]", error);
+    console.error("Update expense status route error:", error);
     return ApiResponse.error("Internal server error", 500);
   }
 }

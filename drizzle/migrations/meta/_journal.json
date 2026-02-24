@@ -19,8 +19,43 @@
     {
       "idx": 2,
       "version": "7",
-      "when": 1771845400757,
-      "tag": "0002_yielding_kronos",
+      "when": 1771841970424,
+      "tag": "0002_powerful_red_ghost",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1771844099582,
+      "tag": "0002_ambiguous_dragon_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1771846364508,
+      "tag": "0003_loud_rictor",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1771848154936,
+      "tag": "0004_bored_calypso",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1771929600000,
+      "tag": "0005_add_timesheet_approval_fields",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1771844260280,
+      "tag": "0002_broken_magma",
       "breakpoints": true
     }
   ]
